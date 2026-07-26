@@ -1,0 +1,1 @@
+"""Form placeholders for notifications."""

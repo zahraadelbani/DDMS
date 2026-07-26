@@ -1,0 +1,1 @@
+"""View placeholders for notifications."""

@@ -1,0 +1,40 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Digital Directorate Management System">
+    <title>{% block title %}Digital Directorate Management System{% endblock %}</title>
+    {% tailwind_css %}
+</head>
+<body class="min-h-screen bg-slate-100 text-slate-900 antialiased">
+    <div class="flex min-h-screen">
+        <aside class="hidden w-64 border-r border-slate-800 bg-slate-950 text-white md:block">
+            <div class="border-b border-slate-800 px-6 py-5">
+                <p class="text-sm font-semibold tracking-wide">DDMS</p>
+                <p class="mt-1 text-xs text-slate-400">Directorate workspace</p>
+            </div>
+            <nav class="space-y-1 p-4" aria-label="Sidebar placeholder">
+                <span class="block rounded-lg bg-slate-800 px-4 py-3 text-sm">Overview</span>
+                <span class="block rounded-lg px-4 py-3 text-sm text-slate-400">Requests</span>
+                <span class="block rounded-lg px-4 py-3 text-sm text-slate-400">Reports</span>
+            </nav>
+        </aside>
+        <div class="flex min-w-0 flex-1 flex-col">
+            <header class="border-b border-slate-200 bg-white px-6 py-4">
+                <div class="mx-auto flex max-w-7xl items-center justify-between">
+                    <span class="font-medium">Digital Directorate</span>
+                    <span class="text-sm text-slate-500">Navigation placeholder</span>
+                </div>
+            </header>
+            <main class="flex-1 p-6 lg:p-10">
+                <div class="mx-auto max-w-7xl">
+                    {% block content %}{% endblock %}
+                </div>
+            </main>
+        </div>
+    </div>
+    <script src="{% static 'js/main.js' %}" defer></script>
+</body>
+</html>
