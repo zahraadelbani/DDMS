@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sign In | Digital Directorate Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: url('/static/background.png') no-repeat center center fixed;
+            background-size: cover;
+        }
+        .unified-container {
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+            border-radius: 1.5rem;
+            display: grid;
+            grid-template-columns: 1fr 1px 1fr;
+        }
+        .divider {
+            background: lightgray;
+            width: 1px;
+            margin: 2rem 0;
+        }
+        .input-field {
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+        .input-field:focus {
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        .signin-btn {
+            background: linear-gradient(135deg, #6b96f2 0%, #002147 100%);
+            box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.3), 0 2px 4px -1px rgba(99, 102, 241, 0.1);
+        }
+        .signin-btn:hover {
+            background: linear-gradient(135deg, #5c8df5 0%, #002147 100%);
+            transform: translateY(-1px);
+        }
+        .webauthn-btn {
+            background: linear-gradient(135deg, #8b5cf6 0%, #4c1d95 100%);
+            box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.3), 0 2px 4px -1px rgba(124, 58, 237, 0.1);
+        }
+        .webauthn-btn:hover {
+            background: linear-gradient(135deg, #7c3aed 0%, #3c1685 100%);
+            transform: translateY(-1px);
+        }
+        .google-btn {
+            transition: all 0.3s ease;
+        }
+        .google-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .brand-panel {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 2.5rem;
+        }
+        .brand-content {
+            text-align: center;
+            max-width: 20rem;
+        }
+        .brand-icon-wrap {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            color: #2563eb;
+        }
+        .brand-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            line-height: 1.35;
+            color: #1e293b;
+            letter-spacing: -0.01em;
+            margin-top: 1.5rem;
+        }
+        .brand-subtitle {
+            margin-top: 0.85rem;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #64748b;
+        }
+        .signin-panel {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 2rem;
+        }
+        @media (max-width: 1024px) {
+            .unified-container {
+                grid-template-columns: 1fr;
+            }
+            .divider {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="flex justify-center items-center min-h-screen p-4">
+        <div class="unified-container w-full max-w-6xl">
+            <!-- Branding -->
+            <div class="brand-panel">
+                <div class="brand-content">
+                    <div class="brand-icon-wrap" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                    </div>
+
+                    <h2 class="brand-title">Digital Directorate Management System</h2>
+                    <p class="brand-subtitle">Student Development, Events and Sports Affairs Directorate</p>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Sign In -->
+            <div class="signin-panel">
+            <div class="w-full max-w-md p-2">
+                <div class="text-center mb-8">
+                    <button type="button" id="webauthn-icon-button" class="focus:outline-none" title="Biometric Sign-In">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-blue-600 hover:text-blue-800 transition duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" />
+                        </svg>
+                    </button>
+
+                    <h1 class="text-3xl font-bold text-gray-800 mt-4">Sign In</h1>
+                </div>
+
+                <form class="space-y-6">
+                    <div>
+                        <label for="id_login" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+                                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+                                </svg>
+                            </div>
+                            <input id="id_login" name="login" type="email" placeholder="you@example.com"
+                                   class="input-field pl-10 w-full px-4 py-3 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="id_password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                </svg>
+                            </div>
+                            <input id="id_password" name="password" type="password" placeholder="••••••••"
+                                   class="input-field pl-10 w-full px-4 py-3 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100">
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <input type="checkbox" name="remember" id="id_remember" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                            <label for="id_remember" class="ml-2 block text-sm text-gray-700">Remember me</label>
+                        </div>
+                        <a href="#" class="text-sm text-blue-600 hover:underline">Forgot password?</a>
+                    </div>
+
+                    <button type="button" class="signin-btn w-full py-3 px-4 border border-transparent rounded-xl text-sm font-medium text-white transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Sign In
+                    </button>
+
+                    <button type="button" id="webauthn-auth-button" class="webauthn-btn w-full py-3 px-4 border border-transparent rounded-xl text-sm font-medium text-white transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                        Sign in with Security Key or Biometrics
+                    </button>
+
+                    <div class="relative mt-6">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-gray-300"></div>
+                        </div>
+                        <div class="relative flex justify-center text-sm">
+                            <span class="px-2 bg-white text-gray-500">Or continue with</span>
+                        </div>
+                    </div>
+
+                    <a href="#" class="google-btn flex items-center justify-center w-full py-3 px-4 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all duration-300">
+                        <img class="h-5 w-5 mr-2" src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google logo">
+                        Sign in with Google
+                    </a>
+                </form>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const authButtons = [
+                document.getElementById('webauthn-auth-button'),
+                document.getElementById('webauthn-icon-button')
+            ].filter(Boolean);
+
+            if (!window.PublicKeyCredential || typeof window.PublicKeyCredential !== 'function') {
+                authButtons.forEach(btn => { btn.style.display = 'none'; });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,552 @@
+{% extends "base.html" %}
+
+{% block title %}Home | Digital Directorate Management System{% endblock %}
+{% block page_heading %}Submit Activity Request{% endblock %}
+
+{% block content %}
+<section class="mx-auto max-w-6xl space-y-6 pb-28">
+    <header class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Student Club Representative</p>
+        <h2 class="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">Submit Activity Request</h2>
+        <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">
+            Complete the request in seven steps before final submission.
+        </p>
+    </header>
+
+    <div class="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6 dark:border-slate-700 dark:bg-slate-800">
+        <ul id="stepper" class="grid grid-cols-1 gap-3 md:grid-cols-4 xl:grid-cols-8"></ul>
+    </div>
+
+    <form id="activityRequestForm" novalidate class="space-y-6">
+        <section data-step-panel="0" class="step-panel rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+            <h3 class="mb-4 text-lg font-semibold text-slate-900 dark:text-slate-100">Step 1 - Club Information</h3>
+            <div class="grid gap-4 md:grid-cols-2">
+                <label class="w-full">
+                    <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Club Name</span>
+                    <input type="text" value="EMU Robotics Club" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40" data-required="true">
+                </label>
+                <label class="w-full">
+                    <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Requester's Full Name</span>
+                    <input type="text" value="Amina Yusuf" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40" data-required="true">
+                </label>
+                <label class="w-full">
+                    <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Role in Club</span>
+                    <input type="text" value="Club Representative" class="w-full rounded-xl border border-slate-300 bg-slate-100 px-3 py-2 text-sm text-slate-700 outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300" data-required="true" readonly>
+                </label>
+                <label class="w-full">
+                    <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Student ID</span>
+                    <input type="text" value="S2026-01987" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40" data-required="true">
+                </label>
+                <label class="w-full">
+                    <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Mobile Phone</span>
+                    <input type="tel" value="+90 555 123 4567" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40" data-required="true">
+                </label>
+                <label class="w-full">
+                    <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Email</span>
+                    <input type="email" value="amina.yusuf@emu.edu.tr" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40" data-required="true">
+                </label>
+                <label class="w-full md:col-span-2">
+                    <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Academic Advisor</span>
+                    <input type="text" value="Dr. Mehmet Kaya" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40" data-required="true">
+                </label>
+            </div>
+        </section>
+
+        <section data-step-panel="1" class="step-panel hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+            <h3 class="mb-4 text-lg font-semibold text-slate-900 dark:text-slate-100">Step 2 - Activity Information</h3>
+            <div class="grid gap-4 md:grid-cols-2">
+                <label class="md:col-span-2">
+                    <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Activity Title</span>
+                    <input id="activityTitle" type="text" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40" data-required="true">
+                </label>
+                <label class="md:col-span-2">
+                    <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Purpose and Short Description</span>
+                    <textarea class="min-h-24 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40" data-required="true"></textarea>
+                </label>
+                <label>
+                    <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Activity Type</span>
+                    <select class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40" data-required="true">
+                        <option value="">Select activity type</option>
+                        <option>Seminar</option><option>Conference</option><option>Workshop</option><option>Training</option>
+                        <option>Panel</option><option>Competition</option><option>Tournament</option><option>Trip</option>
+                        <option>Social</option><option>Cultural</option><option>Artistic</option><option>Sports</option>
+                        <option>Community Service</option><option>Awareness</option><option>Other</option>
+                    </select>
+                </label>
+                <label>
+                    <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Activity Category</span>
+                    <select class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40" multiple data-required="true">
+                        <option>Innovation</option><option>Leadership</option><option>Community</option><option>Academic</option>
+                    </select>
+                </label>
+                <label>
+                    <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Start Date & Time</span>
+                    <input id="startDate" type="datetime-local" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40" data-required="true">
+                </label>
+                <label>
+                    <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">End Date & Time</span>
+                    <input id="endDate" type="datetime-local" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40" data-required="true">
+                </label>
+                <div>
+                    <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Activity Format</span>
+                    <div class="flex flex-wrap gap-2">
+                        <label class="flex items-center gap-2 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 dark:border-slate-600 dark:text-slate-200"><input class="h-4 w-4" type="radio" name="format" value="Physical" checked>Physical</label>
+                        <label class="flex items-center gap-2 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 dark:border-slate-600 dark:text-slate-200"><input class="h-4 w-4" type="radio" name="format" value="Online">Online</label>
+                        <label class="flex items-center gap-2 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 dark:border-slate-600 dark:text-slate-200"><input class="h-4 w-4" type="radio" name="format" value="Hybrid">Hybrid</label>
+                    </div>
+                </div>
+                <label>
+                    <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Venue</span>
+                    <input type="text" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40" data-required="true">
+                </label>
+                <label>
+                    <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Expected Number of Participants</span>
+                    <input id="expectedParticipants" type="number" min="1" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40" data-required="true">
+                </label>
+                <label>
+                    <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Target Audience</span>
+                    <input type="text" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40" data-required="true">
+                </label>
+                <label>
+                    <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Language</span>
+                    <input type="text" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40">
+                </label>
+                <label>
+                    <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Co-organisers</span>
+                    <input type="text" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40">
+                </label>
+                <label>
+                    <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Guest Speaker / Trainer</span>
+                    <input type="text" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40">
+                </label>
+            </div>
+        </section>
+
+        <section data-step-panel="2" class="step-panel hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+            <h3 class="mb-4 text-lg font-semibold text-slate-900 dark:text-slate-100">Step 3 - Service & Support Requests</h3>
+            <div id="servicesGrid" class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3"></div>
+        </section>
+
+        <section data-step-panel="3" class="step-panel hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+            <h3 class="mb-4 text-lg font-semibold text-slate-900 dark:text-slate-100">Step 4 - Transportation</h3>
+            <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 p-3 dark:border-slate-600">
+                <input id="transportRequired" type="checkbox" class="h-4 w-4 rounded border-slate-300 text-blue-600 dark:border-slate-500">
+                <span class="text-sm font-medium text-slate-800 dark:text-slate-200">Transportation required?</span>
+            </label>
+            <div id="transportDetails" class="mt-4 hidden grid gap-4 md:grid-cols-2">
+                <label>
+                    <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Departure Point</span>
+                    <input type="text" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40" data-required-conditional="transport">
+                </label>
+                <label>
+                    <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Departure Date & Time</span>
+                    <input type="datetime-local" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40" data-required-conditional="transport">
+                </label>
+                <label>
+                    <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Return Date & Time</span>
+                    <input type="datetime-local" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40" data-required-conditional="transport">
+                </label>
+                <label>
+                    <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Estimated Passengers</span>
+                    <input type="number" min="1" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40" data-required-conditional="transport">
+                </label>
+                <label>
+                    <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Vehicle Type</span>
+                    <select class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40" data-required-conditional="transport">
+                        <option value="">Select vehicle type</option>
+                        <option>Bus</option><option>Minibus</option><option>Van</option><option>Car</option>
+                    </select>
+                </label>
+            </div>
+            <p class="mt-4 text-sm text-slate-500 dark:text-slate-400">Transportation Request Number is generated after approval.</p>
+        </section>
+
+        <section data-step-panel="4" class="step-panel hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+            <h3 class="mb-4 text-lg font-semibold text-slate-900 dark:text-slate-100">Step 5 - Budget Plan</h3>
+            <div class="max-h-80 overflow-auto rounded-2xl border border-slate-200 dark:border-slate-700">
+                <table class="min-w-full border-collapse text-sm">
+                    <colgroup>
+                        <col class="w-[18%]">
+                        <col class="w-[24%]">
+                        <col class="w-[10%]">
+                        <col class="w-[10%]">
+                        <col class="w-[16%]">
+                        <col class="w-[16%]">
+                        <col class="w-[6%]">
+                    </colgroup>
+                    <thead class="sticky top-0 z-10">
+                        <tr class="bg-slate-50 text-left text-slate-700 dark:bg-slate-900 dark:text-slate-300">
+                            <th class="px-4 py-3 font-medium">Budget Category</th>
+                            <th class="px-4 py-3 font-medium">Description</th>
+                            <th class="px-4 py-3 font-medium">Qty</th>
+                            <th class="px-4 py-3 font-medium">Unit</th>
+                            <th class="px-4 py-3 font-medium">Planned Unit Cost</th>
+                            <th class="px-4 py-3 font-medium">Planned Total</th>
+                            <th class="px-4 py-3 font-medium text-center"> </th>
+                        </tr>
+                    </thead>
+                    <tbody id="budgetBody" class="divide-y divide-slate-200 dark:divide-slate-700"></tbody>
+                </table>
+            </div>
+            <div class="mt-4 flex items-center justify-between">
+                <button id="addBudgetRow" type="button" class="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700">+ Add Row</button>
+                <p id="grandTotalWrap" class="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-base font-semibold text-slate-700 transition dark:border-slate-600 dark:bg-slate-900 dark:text-slate-300">Grand Total: <span id="grandTotal">0.00</span></p>
+            </div>
+            <div class="mt-6 grid gap-4 md:grid-cols-2">
+                <label>
+                    <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Funding Source</span>
+                    <select class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40" data-required="true">
+                        <option value="">Select source</option>
+                        <option>Directorate</option><option>Rectorate</option><option>Faculty</option>
+                        <option>Sponsorship</option><option>Student Contribution</option><option>External Funding</option><option>Other</option>
+                    </select>
+                </label>
+                <label>
+                    <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Sponsorship / In-kind Contribution</span>
+                    <input type="text" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40">
+                </label>
+                <label class="md:col-span-2">
+                    <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Budget Notes</span>
+                    <textarea class="min-h-24 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40"></textarea>
+                </label>
+            </div>
+        </section>
+
+        <section data-step-panel="5" class="step-panel hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+            <h3 class="mb-4 text-lg font-semibold text-slate-900 dark:text-slate-100">Step 6 - Supporting Documents</h3>
+            <label for="fileInput" id="dropZone" class="flex min-h-40 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 p-6 text-center transition hover:border-blue-500 hover:bg-blue-50 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-blue-400 dark:hover:bg-blue-950/40">
+                <span class="text-lg font-semibold">Drag & drop files here</span>
+                <span class="mt-1 text-sm text-slate-500 dark:text-slate-400">or click to browse multiple files</span>
+                <input id="fileInput" type="file" class="hidden" multiple>
+            </label>
+            <div class="mt-4 rounded-xl border border-slate-200 dark:border-slate-700">
+                <ul id="uploadList" class="divide-y divide-slate-200 dark:divide-slate-700"></ul>
+            </div>
+            <p class="mt-3 text-xs text-slate-500 dark:text-slate-400">Recommended: Activity Programme, Quotation, Proforma Invoice, Participant List, Poster, Sponsorship Letter, Risk Assessment, Other Supporting Documents.</p>
+        </section>
+
+        <section data-step-panel="6" class="step-panel hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+            <h3 class="mb-4 text-lg font-semibold text-slate-900 dark:text-slate-100">Step 7 - Compliance</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 p-3 dark:border-slate-600">
+                        <input id="riskReq" type="checkbox" class="h-4 w-4 rounded border-slate-300 text-blue-600 dark:border-slate-500">
+                        <span class="text-sm font-medium text-slate-800 dark:text-slate-200">Risk/Security Requirement</span>
+                    </label>
+                    <textarea id="riskNotes" class="mt-3 hidden min-h-24 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40" placeholder="Describe risk/security requirements..."></textarea>
+                </div>
+                <div>
+                    <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 p-3 dark:border-slate-600">
+                        <input id="accessReq" type="checkbox" class="h-4 w-4 rounded border-slate-300 text-blue-600 dark:border-slate-500">
+                        <span class="text-sm font-medium text-slate-800 dark:text-slate-200">Accessibility Requirement</span>
+                    </label>
+                    <textarea id="accessNotes" class="mt-3 hidden min-h-24 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40" placeholder="Describe accessibility requirements..."></textarea>
+                </div>
+                <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 p-3 dark:border-slate-600">
+                    <input id="consentReq" type="checkbox" class="h-4 w-4 rounded border-slate-300 text-blue-600 dark:border-slate-500" data-required="true">
+                    <span class="text-sm font-medium text-slate-800 dark:text-slate-200">Personal Data / Image Consent Confirmed</span>
+                </label>
+            </div>
+        </section>
+
+        <section data-step-panel="7" class="step-panel hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+            <h3 class="mb-4 text-lg font-semibold text-slate-900 dark:text-slate-100">Final Review</h3>
+            <div id="reviewContent" class="space-y-4 text-sm text-slate-700 dark:text-slate-300"></div>
+        </section>
+
+        <div id="stickyNav" class="fixed bottom-0 left-0 right-0 z-20 border-t border-slate-200 bg-white/95 p-4 backdrop-blur dark:border-slate-700 dark:bg-slate-900/95">
+            <div class="mx-auto flex max-w-6xl items-center justify-end gap-2">
+                <button id="prevBtn" type="button" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700">Back</button>
+                <div class="flex items-center gap-2">
+                    <button id="nextBtn" type="button" class="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white">Next Step</button>
+                    <button id="submitBtn" type="button" class="hidden rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-400">Submit Request</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <section id="successState" class="hidden rounded-3xl border border-emerald-200 bg-emerald-50 p-8 text-center shadow-sm dark:border-emerald-800 dark:bg-emerald-950/40">
+        <div class="mx-auto max-w-xl">
+            <h3 class="text-2xl font-bold text-emerald-700 dark:text-emerald-300">Activity Request Submitted Successfully</h3>
+            <p class="mt-3 text-slate-700 dark:text-slate-300">Your request has been received and is now in the system.</p>
+            <div class="mt-6 space-y-2 rounded-2xl border border-emerald-200 bg-white p-4 text-left dark:border-emerald-800 dark:bg-slate-800 dark:text-slate-200">
+                <p><span class="font-semibold">Request Number:</span> <span id="successReqNo"></span></p>
+                <p><span class="font-semibold">Submission Date:</span> <span id="successDate"></span></p>
+                <p><span class="font-semibold">Current Status:</span> Submitted</p>
+            </div>
+            <div class="mt-6 flex flex-wrap justify-center gap-3">
+                <button type="button" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700">View Request Status</button>
+                <button type="button" class="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white" onclick="window.location.reload()">Submit Another Request</button>
+            </div>
+        </div>
+    </section>
+</section>
+{% endblock %}
+
+{% block extra_body %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const steps = [
+        { name: "Club Info" }, { name: "Activity" }, { name: "Services" },
+        { name: "Transport" }, { name: "Budget" }, { name: "Documents" },
+        { name: "Compliance" }, { name: "Review" }
+    ];
+    let currentStep = 0;
+
+    const panels = [...document.querySelectorAll(".step-panel")];
+    const stepper = document.getElementById("stepper");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const submitBtn = document.getElementById("submitBtn");
+    const form = document.getElementById("activityRequestForm");
+    const successState = document.getElementById("successState");
+    const grandTotalWrap = document.getElementById("grandTotalWrap");
+
+    const fieldClass = "w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40";
+    const readonlyFieldClass = "w-full rounded-lg border border-slate-200 bg-slate-100 px-3 py-2 text-sm text-slate-700 outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300";
+
+    const serviceItems = [
+        "Venue Reservation", "Sound System", "Lighting / Stage", "Tables / Chairs", "Printing / Posters",
+        "Social Media Promotion", "Photography / Video", "Food & Beverage", "Awards / Plaques / Medals",
+        "Accommodation", "Transportation", "Security / Cleaning", "Technical / Internet Support", "Other"
+    ];
+    const servicesGrid = document.getElementById("servicesGrid");
+    serviceItems.forEach((item, idx) => {
+        servicesGrid.insertAdjacentHTML("beforeend", `
+            <article class="rounded-2xl border border-slate-200 p-4 dark:border-slate-600">
+                <label class="flex cursor-pointer items-center gap-2 p-0">
+                    <input type="checkbox" class="service-check h-4 w-4 rounded border-slate-300 text-blue-600 dark:border-slate-500" data-target="service-${idx}">
+                    <span class="text-sm font-medium text-slate-800 dark:text-slate-200">${item}</span>
+                </label>
+                <div id="service-${idx}" class="mt-3 hidden space-y-3">
+                    <input type="number" min="1" class="${fieldClass}" placeholder="Quantity">
+                    <textarea class="${fieldClass}" placeholder="Description / Specification"></textarea>
+                </div>
+            </article>
+        `);
+    });
+
+    const budgetBody = document.getElementById("budgetBody");
+    const grandTotal = document.getElementById("grandTotal");
+    function addBudgetRow() {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td class="p-3 align-top"><input class="${fieldClass}" placeholder="Category"></td>
+            <td class="p-3 align-top"><input class="${fieldClass}" placeholder="Description"></td>
+            <td class="p-3 align-top"><input type="number" min="0" class="qty ${fieldClass}" value="0"></td>
+            <td class="p-3 align-top"><input class="${fieldClass}" placeholder="Unit"></td>
+            <td class="p-3 align-top"><input type="number" min="0" step="0.01" class="unit-cost ${fieldClass}" value="0"></td>
+            <td class="p-3 align-top"><input type="number" class="planned-total ${readonlyFieldClass}" value="0" readonly></td>
+            <td class="p-3 text-center align-top">
+                <button type="button" class="remove-row inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition hover:border-red-200 hover:bg-red-50 hover:text-red-600 dark:border-slate-600 dark:text-slate-400 dark:hover:border-red-800 dark:hover:bg-red-950/40 dark:hover:text-red-400" aria-label="Remove budget row" title="Remove budget row">
+                    <svg class="pointer-events-none h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </td>
+        `;
+        budgetBody.appendChild(row);
+    }
+    addBudgetRow();
+
+    function calcBudgetTotals() {
+        let total = 0;
+        budgetBody.querySelectorAll("tr").forEach(row => {
+            const qty = parseFloat(row.querySelector(".qty").value) || 0;
+            const unitCost = parseFloat(row.querySelector(".unit-cost").value) || 0;
+            const rowTotal = qty * unitCost;
+            row.querySelector(".planned-total").value = rowTotal.toFixed(2);
+            total += rowTotal;
+        });
+        grandTotal.textContent = total.toFixed(2);
+        grandTotalWrap.classList.add(
+            "border-emerald-200", "bg-emerald-50", "text-emerald-700",
+            "dark:border-emerald-800", "dark:bg-emerald-950", "dark:text-emerald-300",
+            "scale-[1.02]"
+        );
+        clearTimeout(calcBudgetTotals.feedbackTimer);
+        calcBudgetTotals.feedbackTimer = setTimeout(() => {
+            grandTotalWrap.classList.remove(
+                "border-emerald-200", "bg-emerald-50", "text-emerald-700",
+                "dark:border-emerald-800", "dark:bg-emerald-950", "dark:text-emerald-300",
+                "scale-[1.02]"
+            );
+        }, 700);
+    }
+
+    const transportRequired = document.getElementById("transportRequired");
+    const transportDetails = document.getElementById("transportDetails");
+    transportRequired.addEventListener("change", () => {
+        transportDetails.classList.toggle("hidden", !transportRequired.checked);
+    });
+
+    function validateStep(step) {
+        const panel = panels[step];
+        panel.querySelectorAll(".validation-error").forEach(el => el.remove());
+        panel.querySelectorAll(".border-red-500, .ring-2, .ring-red-100").forEach(field => {
+            field.classList.remove("border-red-500", "ring-2", "ring-red-100");
+        });
+        return true;
+    }
+
+    function buildReview() {
+        const review = document.getElementById("reviewContent");
+        const title = document.getElementById("activityTitle").value || "Untitled Activity";
+        const participants = document.getElementById("expectedParticipants").value || "0";
+        const checkedServices = [...document.querySelectorAll(".service-check:checked")]
+            .map((checkbox) => checkbox.closest("article")?.querySelector("span")?.textContent?.trim())
+            .filter(Boolean);
+        const uploadedFiles = [...fileInput.files].map((file) => file.name);
+        const transportEnabled = transportRequired.checked ? "Yes" : "No";
+        review.innerHTML = `
+            <article class="rounded-2xl border border-slate-200 p-4 dark:border-slate-600">
+                <div class="flex items-start justify-between gap-4">
+                    <div>
+                        <h4 class="font-semibold text-slate-900 dark:text-slate-100">Activity Snapshot</h4>
+                        <p class="mt-2"><span class="font-medium">Title:</span> ${title}</p>
+                        <p><span class="font-medium">Expected Participants:</span> ${participants}</p>
+                        <p><span class="font-medium">Budget Grand Total:</span> ${grandTotal.textContent}</p>
+                    </div>
+                    <button type="button" id="toggleReviewDetails" class="rounded-lg border border-slate-300 px-3 py-2 text-xs font-medium text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700">
+                        View all
+                    </button>
+                </div>
+            </article>
+            <article id="reviewDetailsCard" class="hidden rounded-2xl border border-slate-200 p-4 dark:border-slate-600">
+                <h4 class="font-semibold text-slate-900 dark:text-slate-100">Full Request Summary</h4>
+                <div class="mt-3 grid gap-4 md:grid-cols-2">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Club Information</p>
+                        <p class="mt-2"><span class="font-medium">Club:</span> ${document.querySelector('input[value="EMU Robotics Club"]')?.value || "-"}</p>
+                        <p><span class="font-medium">Requester:</span> ${document.querySelector('input[value="Amina Yusuf"]')?.value || "-"}</p>
+                        <p><span class="font-medium">Advisor:</span> ${document.querySelector('input[value="Dr. Mehmet Kaya"]')?.value || "-"}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Request Summary</p>
+                        <p class="mt-2"><span class="font-medium">Transport Required:</span> ${transportEnabled}</p>
+                        <p><span class="font-medium">Selected Services:</span> ${checkedServices.length ? checkedServices.join(", ") : "None selected"}</p>
+                        <p><span class="font-medium">Files:</span> ${uploadedFiles.length ? uploadedFiles.join(", ") : "No files uploaded"}</p>
+                    </div>
+                </div>
+            </article>
+            <article class="rounded-2xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-950/40">
+                <h4 class="font-semibold text-amber-900 dark:text-amber-200">Submission Notice</h4>
+                <p class="mt-2 text-sm text-amber-800 dark:text-amber-300">Once submitted, no changes can be made to this request.</p>
+            </article>
+        `;
+    }
+
+    function renderStepper() {
+        stepper.innerHTML = steps.map((step, idx) => `
+            <li>
+                <button type="button" data-jump="${idx}" class="w-full rounded-2xl border p-3 text-left text-xs transition sm:text-sm ${idx === currentStep ? "border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-950/50" : "border-slate-200 hover:bg-slate-50 dark:border-slate-600 dark:hover:bg-slate-700/60"}">
+                    <p class="font-semibold text-slate-900 dark:text-slate-100">${step.name}</p>
+                    <p class="text-slate-500 dark:text-slate-400">Step ${idx + 1}</p>
+                </button>
+            </li>`).join("");
+    }
+
+    function renderStep() {
+        panels.forEach((p, idx) => p.classList.toggle("hidden", idx !== currentStep));
+        prevBtn.classList.toggle("invisible", currentStep === 0);
+        nextBtn.classList.toggle("hidden", currentStep === steps.length - 1);
+        submitBtn.classList.toggle("hidden", currentStep !== steps.length - 1);
+        if (currentStep === steps.length - 1) buildReview();
+        renderStepper();
+    }
+
+    prevBtn.addEventListener("click", () => {
+        if (currentStep > 0) currentStep -= 1;
+        renderStep();
+    });
+    nextBtn.addEventListener("click", () => {
+        if (!validateStep(currentStep)) return;
+        if (currentStep < steps.length - 1) currentStep += 1;
+        renderStep();
+    });
+
+    submitBtn.addEventListener("click", () => {
+        if (!validateStep(currentStep)) return;
+        const requestNo = `REQ-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 999999)).padStart(6, "0")}`;
+        document.getElementById("successReqNo").textContent = requestNo;
+        document.getElementById("successDate").textContent = new Date().toLocaleString();
+        form.classList.add("hidden");
+        document.getElementById("stickyNav").classList.add("hidden");
+        successState.classList.remove("hidden");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    document.getElementById("addBudgetRow").addEventListener("click", addBudgetRow);
+    budgetBody.addEventListener("input", calcBudgetTotals);
+    budgetBody.addEventListener("click", (e) => {
+        const removeButton = e.target.closest(".remove-row");
+        if (!removeButton) return;
+        removeButton.closest("tr").remove();
+        calcBudgetTotals();
+    });
+    servicesGrid.addEventListener("change", (e) => {
+        if (!e.target.classList.contains("service-check")) return;
+        const target = document.getElementById(e.target.dataset.target);
+        target.classList.toggle("hidden", !e.target.checked);
+    });
+
+    const fileInput = document.getElementById("fileInput");
+    const dropZone = document.getElementById("dropZone");
+    const uploadList = document.getElementById("uploadList");
+    function renderFiles(files) {
+        uploadList.innerHTML = "";
+        [...files].forEach((f, i) => {
+            uploadList.insertAdjacentHTML("beforeend", `
+                <li class="flex items-center justify-between gap-2 p-3 text-slate-800 dark:text-slate-200">
+                    <div class="min-w-0">
+                        <p class="truncate text-sm font-medium">${f.name}</p>
+                    </div>
+                    <button type="button" class="remove-upload text-xs font-medium text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300" data-index="${i}">Remove</button>
+                </li>
+            `);
+        });
+        if (!files.length) {
+            uploadList.innerHTML = `<li class="p-4 text-sm text-slate-500 dark:text-slate-400">No files uploaded yet.</li>`;
+        }
+    }
+    renderFiles([]);
+    fileInput.addEventListener("change", () => renderFiles(fileInput.files));
+    dropZone.addEventListener("dragover", (e) => { e.preventDefault(); dropZone.classList.add("border-blue-500"); });
+    dropZone.addEventListener("dragleave", () => dropZone.classList.remove("border-blue-500"));
+    dropZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropZone.classList.remove("border-blue-500");
+        fileInput.files = e.dataTransfer.files;
+        renderFiles(fileInput.files);
+    });
+    uploadList.addEventListener("click", (e) => {
+        if (!e.target.classList.contains("remove-upload")) return;
+        const dt = new DataTransfer();
+        [...fileInput.files].forEach((f, i) => {
+            if (String(i) !== e.target.dataset.index) dt.items.add(f);
+        });
+        fileInput.files = dt.files;
+        renderFiles(fileInput.files);
+    });
+    const riskReq = document.getElementById("riskReq");
+    const accessReq = document.getElementById("accessReq");
+    riskReq.addEventListener("change", () => document.getElementById("riskNotes").classList.toggle("hidden", !riskReq.checked));
+    accessReq.addEventListener("change", () => document.getElementById("accessNotes").classList.toggle("hidden", !accessReq.checked));
+    document.addEventListener("click", (e) => {
+        const jumpButton = e.target.closest("[data-jump]");
+        if (jumpButton) {
+            currentStep = Number(jumpButton.dataset.jump);
+            renderStep();
+            return;
+        }
+        if (e.target.id === "toggleReviewDetails") {
+            const detailsCard = document.getElementById("reviewDetailsCard");
+            const isHidden = detailsCard.classList.toggle("hidden");
+            e.target.textContent = isHidden ? "View all" : "Hide details";
+        }
+    });
+    calcBudgetTotals();
+    renderStep();
+});
+</script>
+{% endblock %}

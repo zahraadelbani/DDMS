@@ -1,0 +1,365 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Staff | Digital Directorate Management System{% endblock %}
+{% block page_heading %}Manage Staff{% endblock %}
+
+{% block content %}
+<section class="mx-auto max-w-6xl space-y-6 pb-10">
+    <header class="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between dark:border-slate-700 dark:bg-slate-800">
+        <div>
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Unit Coordinator</p>
+            <h2 class="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">Manage Staff Accounts</h2>
+            <p class="mt-2 max-w-3xl text-sm text-slate-600 dark:text-slate-400">
+                Create, view, and remove staff for Club Staff, Society Staff, and Sport Affairs. New accounts receive a default password that the user must change later.
+            </p>
+        </div>
+        <button type="button" id="openCreateStaffBtn"
+            class="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+            Create Staff
+        </button>
+    </header>
+
+    <div class="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5 dark:border-slate-700 dark:bg-slate-800">
+        <div class="flex flex-col gap-4">
+            <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                <p class="text-sm font-medium text-slate-700 dark:text-slate-300">Filter by staff type</p>
+                <div id="roleFilters" class="flex flex-wrap gap-2">
+                    <button type="button" data-role="all" class="role-btn rounded-xl border px-4 py-2 text-sm font-medium transition">All</button>
+                    <button type="button" data-role="club_staff" class="role-btn rounded-xl border px-4 py-2 text-sm font-medium transition">Club Staff</button>
+                    <button type="button" data-role="society_staff" class="role-btn rounded-xl border px-4 py-2 text-sm font-medium transition">Society Staff</button>
+                    <button type="button" data-role="sport_affairs" class="role-btn rounded-xl border px-4 py-2 text-sm font-medium transition">Sport Affairs</button>
+                </div>
+            </div>
+            <div class="border-t border-slate-200 pt-4 dark:border-slate-700">
+                <label class="block w-full sm:max-w-sm">
+                    <span class="mb-1 block text-xs font-medium text-slate-500 dark:text-slate-400">Search staff</span>
+                    <input id="staffSearch" type="search" placeholder="Search by name, email, or phone..."
+                        class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40">
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <div id="tableWrap" class="max-h-[28rem] overflow-auto">
+            <table class="min-w-full border-collapse text-sm">
+                <thead class="sticky top-0 z-10">
+                    <tr class="border-b border-slate-200 bg-slate-50 text-left text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
+                        <th class="px-5 py-4 font-medium">Staff</th>
+                        <th class="px-5 py-4 font-medium">Email</th>
+                        <th class="px-5 py-4 font-medium">Role</th>
+                        <th class="px-5 py-4 font-medium">Created</th>
+                        <th class="px-5 py-4 text-center font-medium">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="staffBody" class="divide-y divide-slate-200 dark:divide-slate-700"></tbody>
+            </table>
+        </div>
+        <div id="staffEmpty" class="hidden px-6 py-12 text-center text-sm text-slate-500 dark:text-slate-400">
+            No staff accounts match this filter.
+        </div>
+    </div>
+</section>
+
+<div id="createStaffModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="createStaffTitle">
+    <div id="createStaffBackdrop" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div>
+    <div class="relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-3xl border border-slate-200 bg-white p-6 shadow-xl dark:border-slate-700 dark:bg-slate-800">
+        <div class="flex items-start justify-between gap-4">
+            <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">New Staff</p>
+                <h3 id="createStaffTitle" class="mt-1 text-lg font-semibold text-slate-900 dark:text-slate-100">Create Staff Account</h3>
+                <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Assign a staff role. A default password will be generated.</p>
+            </div>
+            <button type="button" id="closeCreateStaffModal" class="rounded-lg border border-slate-200 p-2 text-slate-500 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-400 dark:hover:bg-slate-700" aria-label="Close">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+
+        <form id="createStaffForm" class="mt-5 grid gap-4" novalidate>
+            <label>
+                <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Full Name</span>
+                <input id="staffName" type="text" required class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40" placeholder="e.g. Selin Akar">
+            </label>
+            <label>
+                <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Email</span>
+                <input id="staffEmail" type="email" required class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40" placeholder="name@emu.edu.tr">
+            </label>
+            <label>
+                <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Phone</span>
+                <input id="staffPhone" type="tel" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40" placeholder="+90 555 000 0000">
+            </label>
+            <label>
+                <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Staff Role</span>
+                <select id="staffRole" required class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40">
+                    <option value="">Select role</option>
+                    <option value="club_staff">Club Staff</option>
+                    <option value="society_staff">Society Staff</option>
+                    <option value="sport_affairs">Sport Affairs</option>
+                </select>
+            </label>
+            <div class="flex justify-end gap-2 pt-2">
+                <button type="button" id="cancelCreateStaff" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700">Cancel</button>
+                <button type="submit" class="rounded-xl bg-slate-900 px-5 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white">Create Account</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="passwordModal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="passwordTitle">
+    <div id="passwordBackdrop" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div>
+    <div class="relative w-full max-w-md rounded-3xl border border-emerald-200 bg-white p-6 shadow-xl dark:border-emerald-800 dark:bg-slate-800">
+        <h3 id="passwordTitle" class="text-lg font-semibold text-slate-900 dark:text-slate-100">Staff account created</h3>
+        <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">Share this default password with the user. They should change it from their profile after first login.</p>
+        <div class="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-600 dark:bg-slate-900">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Default password</p>
+            <p id="defaultPasswordValue" class="mt-2 font-mono text-base font-semibold text-slate-900 dark:text-slate-100"></p>
+        </div>
+        <div class="mt-6 flex justify-end">
+            <button type="button" id="closePasswordModal" class="rounded-xl bg-slate-900 px-5 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white">Done</button>
+        </div>
+    </div>
+</div>
+
+<div id="deleteModal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="deleteTitle">
+    <div id="deleteBackdrop" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div>
+    <div class="relative w-full max-w-md rounded-3xl border border-red-200 bg-white p-6 shadow-xl dark:border-red-800 dark:bg-slate-800">
+        <h3 id="deleteTitle" class="text-lg font-semibold text-slate-900 dark:text-slate-100">Delete staff account?</h3>
+        <p id="deleteMessage" class="mt-2 text-sm text-slate-600 dark:text-slate-400"></p>
+        <div class="mt-6 flex justify-end gap-2">
+            <button type="button" id="cancelDelete" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700">Cancel</button>
+            <button type="button" id="confirmDelete" class="rounded-xl bg-red-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-red-500">Delete</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_body %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const avatar = (name) => `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=002147&color=ffffff&size=128`;
+    const DEFAULT_PASSWORD = "Welcome@EMU2026";
+
+    const roleLabels = {
+        club_staff: "Club Staff",
+        society_staff: "Society Staff",
+        sport_affairs: "Sport Affairs"
+    };
+
+    let staff = [
+        { id: "s1", name: "Leyla Cetin", email: "leyla.cetin@emu.edu.tr", phone: "+90 555 111 2233", role: "club_staff", createdAt: "2026-03-12", avatar: avatar("Leyla Cetin") },
+        { id: "s2", name: "Burak Yildiz", email: "burak.yildiz@emu.edu.tr", phone: "+90 555 222 3344", role: "society_staff", createdAt: "2026-04-02", avatar: avatar("Burak Yildiz") },
+        { id: "s3", name: "Selin Akar", email: "selin.akar@emu.edu.tr", phone: "+90 555 333 4455", role: "sport_affairs", createdAt: "2026-05-18", avatar: avatar("Selin Akar") },
+        { id: "s4", name: "Emre Sahin", email: "emre.sahin@emu.edu.tr", phone: "+90 555 444 5566", role: "club_staff", createdAt: "2026-06-01", avatar: avatar("Emre Sahin") }
+    ];
+
+    let roleFilter = "all";
+    let searchQuery = "";
+    let pendingDeleteId = null;
+
+    const staffBody = document.getElementById("staffBody");
+    const tableWrap = document.getElementById("tableWrap");
+    const staffEmpty = document.getElementById("staffEmpty");
+    const staffSearch = document.getElementById("staffSearch");
+    const createStaffModal = document.getElementById("createStaffModal");
+    const createStaffForm = document.getElementById("createStaffForm");
+    const passwordModal = document.getElementById("passwordModal");
+    const deleteModal = document.getElementById("deleteModal");
+
+    function roleBadge(role) {
+        const styles = {
+            club_staff: "border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-300",
+            society_staff: "border-violet-200 bg-violet-50 text-violet-800 dark:border-violet-800 dark:bg-violet-950/40 dark:text-violet-300",
+            sport_affairs: "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300"
+        };
+        return `<span class="inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${styles[role]}">${roleLabels[role]}</span>`;
+    }
+
+    function setActiveFilters() {
+        document.querySelectorAll(".role-btn").forEach((button) => {
+            const isActive = button.dataset.role === roleFilter;
+            button.className = `role-btn rounded-xl border px-4 py-2 text-sm font-medium transition ${
+                isActive
+                    ? "border-blue-500 bg-blue-50 text-blue-700 dark:border-blue-400 dark:bg-blue-950/50 dark:text-blue-300"
+                    : "border-slate-200 text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/60"
+            }`;
+        });
+    }
+
+    function filteredStaff() {
+        const query = searchQuery.trim().toLowerCase();
+        return staff.filter((item) => {
+            if (roleFilter !== "all" && item.role !== roleFilter) return false;
+            if (!query) return true;
+            return [item.name, item.email, item.phone, roleLabels[item.role]]
+                .join(" ")
+                .toLowerCase()
+                .includes(query);
+        });
+    }
+
+    function showToast(message, isError = false) {
+        const toast = document.createElement("div");
+        toast.className = isError
+            ? "fixed right-4 top-20 z-[70] rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700 shadow dark:border-red-800 dark:bg-red-950 dark:text-red-300"
+            : "fixed right-4 top-20 z-[70] rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700 shadow dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-300";
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2600);
+    }
+
+    function render() {
+        setActiveFilters();
+        const items = filteredStaff();
+        if (!items.length) {
+            staffBody.innerHTML = "";
+            tableWrap.classList.add("hidden");
+            staffEmpty.classList.remove("hidden");
+            return;
+        }
+        staffEmpty.classList.add("hidden");
+        tableWrap.classList.remove("hidden");
+        staffBody.innerHTML = items.map((item) => `
+            <tr class="align-middle transition hover:bg-slate-50/80 dark:hover:bg-slate-900/40">
+                <td class="px-5 py-4">
+                    <div class="flex items-center gap-3">
+                        <img src="${item.avatar}" alt="${item.name}" class="h-10 w-10 rounded-full border border-slate-200 object-cover dark:border-slate-600">
+                        <div>
+                            <p class="font-semibold text-slate-900 dark:text-slate-100">${item.name}</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">${item.phone || "—"}</p>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-5 py-4 text-slate-600 dark:text-slate-400">${item.email}</td>
+                <td class="px-5 py-4">${roleBadge(item.role)}</td>
+                <td class="px-5 py-4 text-slate-600 dark:text-slate-400">${item.createdAt}</td>
+                <td class="px-5 py-4 text-center">
+                    <button type="button" class="delete-staff inline-flex h-9 w-9 items-center justify-center rounded-lg border border-red-200 text-red-600 transition hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950/40"
+                        data-id="${item.id}" title="Delete staff" aria-label="Delete ${item.name}">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                    </button>
+                </td>
+            </tr>
+        `).join("");
+    }
+
+    function openCreateModal() {
+        createStaffForm.reset();
+        createStaffModal.classList.remove("hidden");
+        createStaffModal.classList.add("flex");
+    }
+
+    function closeCreateModal() {
+        createStaffModal.classList.add("hidden");
+        createStaffModal.classList.remove("flex");
+    }
+
+    function openPasswordModal(password) {
+        document.getElementById("defaultPasswordValue").textContent = password;
+        passwordModal.classList.remove("hidden");
+        passwordModal.classList.add("flex");
+    }
+
+    function closePasswordModal() {
+        passwordModal.classList.add("hidden");
+        passwordModal.classList.remove("flex");
+    }
+
+    function openDeleteModal(id) {
+        const item = staff.find((entry) => entry.id === id);
+        if (!item) return;
+        pendingDeleteId = id;
+        document.getElementById("deleteMessage").textContent = `Remove ${item.name} (${roleLabels[item.role]})? This cannot be undone in this demo.`;
+        deleteModal.classList.remove("hidden");
+        deleteModal.classList.add("flex");
+    }
+
+    function closeDeleteModal() {
+        deleteModal.classList.add("hidden");
+        deleteModal.classList.remove("flex");
+        pendingDeleteId = null;
+    }
+
+    document.getElementById("roleFilters").addEventListener("click", (event) => {
+        const button = event.target.closest(".role-btn");
+        if (!button) return;
+        roleFilter = button.dataset.role;
+        render();
+    });
+
+    staffSearch.addEventListener("input", () => {
+        searchQuery = staffSearch.value;
+        render();
+    });
+
+    document.getElementById("openCreateStaffBtn").addEventListener("click", openCreateModal);
+    document.getElementById("closeCreateStaffModal").addEventListener("click", closeCreateModal);
+    document.getElementById("cancelCreateStaff").addEventListener("click", closeCreateModal);
+    document.getElementById("createStaffBackdrop").addEventListener("click", closeCreateModal);
+    document.getElementById("closePasswordModal").addEventListener("click", closePasswordModal);
+    document.getElementById("passwordBackdrop").addEventListener("click", closePasswordModal);
+    document.getElementById("cancelDelete").addEventListener("click", closeDeleteModal);
+    document.getElementById("deleteBackdrop").addEventListener("click", closeDeleteModal);
+
+    staffBody.addEventListener("click", (event) => {
+        const button = event.target.closest(".delete-staff");
+        if (button) openDeleteModal(button.dataset.id);
+    });
+
+    document.getElementById("confirmDelete").addEventListener("click", () => {
+        if (!pendingDeleteId) return;
+        staff = staff.filter((item) => item.id !== pendingDeleteId);
+        closeDeleteModal();
+        render();
+        showToast("Staff account deleted.");
+    });
+
+    createStaffForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const name = document.getElementById("staffName").value.trim();
+        const email = document.getElementById("staffEmail").value.trim();
+        const phone = document.getElementById("staffPhone").value.trim();
+        const role = document.getElementById("staffRole").value;
+
+        if (!name || !email || !role) {
+            showToast("Please fill in name, email, and role.", true);
+            return;
+        }
+        if (staff.some((item) => item.email.toLowerCase() === email.toLowerCase())) {
+            showToast("A staff account with this email already exists.", true);
+            return;
+        }
+
+        staff.unshift({
+            id: `s-${Date.now()}`,
+            name,
+            email,
+            phone,
+            role,
+            createdAt: new Date().toISOString().slice(0, 10),
+            avatar: avatar(name)
+        });
+
+        closeCreateModal();
+        render();
+        openPasswordModal(DEFAULT_PASSWORD);
+        showToast(`${name} added as ${roleLabels[role]}.`);
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return;
+        if (!deleteModal.classList.contains("hidden")) {
+            closeDeleteModal();
+            return;
+        }
+        if (!passwordModal.classList.contains("hidden")) {
+            closePasswordModal();
+            return;
+        }
+        if (!createStaffModal.classList.contains("hidden")) closeCreateModal();
+    });
+
+    render();
+});
+</script>
+{% endblock %}

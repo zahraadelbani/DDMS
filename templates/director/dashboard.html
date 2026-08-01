@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Director Dashboard | Digital Directorate Management System{% endblock %}
+{% block page_heading %}Dashboard{% endblock %}
+
+{% block content %}
+<section class="mx-auto max-w-6xl space-y-6 pb-10">
+    <header class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Directorate Director</p>
+        <h2 class="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">Director overview</h2>
+        <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">Final authority on requests already cleared by staff and the unit coordinator. Decisions notify representatives.</p>
+        <a href="{% url 'core:director_view_requests' %}" class="mt-5 inline-flex rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white">Open final review</a>
+    </header>
+
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <article class="rounded-3xl border border-amber-200 bg-amber-50 p-5 shadow-sm dark:border-amber-800 dark:bg-amber-950/30">
+            <p class="text-xs font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-300">Awaiting final decision</p>
+            <p class="mt-3 text-3xl font-bold text-amber-900 dark:text-amber-200">3</p>
+            <p class="mt-1 text-sm text-amber-700/80 dark:text-amber-400">Staff + coordinator approved</p>
+        </article>
+        <article class="rounded-3xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm dark:border-emerald-800 dark:bg-emerald-950/30">
+            <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700 dark:text-emerald-300">Fully approved</p>
+            <p class="mt-3 text-3xl font-bold text-emerald-900 dark:text-emerald-200">11</p>
+            <p class="mt-1 text-sm text-emerald-700/80 dark:text-emerald-400">This semester</p>
+        </article>
+        <article class="rounded-3xl border border-red-200 bg-red-50 p-5 shadow-sm dark:border-red-800 dark:bg-red-950/30">
+            <p class="text-xs font-semibold uppercase tracking-wide text-red-700 dark:text-red-300">Final rejections</p>
+            <p class="mt-3 text-3xl font-bold text-red-900 dark:text-red-200">2</p>
+            <p class="mt-1 text-sm text-red-700/80 dark:text-red-400">Representatives notified</p>
+        </article>
+        <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Budget under review</p>
+            <p class="mt-3 text-3xl font-bold text-slate-900 dark:text-slate-100">₺1.2k</p>
+            <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Across pending finals</p>
+        </article>
+    </div>
+
+    <div class="grid gap-6 lg:grid-cols-2">
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+            <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100">Ready for your signature</h3>
+            <ul class="mt-4 divide-y divide-slate-200 dark:divide-slate-700">
+                <li class="py-3">
+                    <div class="flex items-center justify-between gap-3">
+                        <p class="font-medium text-slate-900 dark:text-slate-100">Campus Sustainability Panel</p>
+                        <span class="text-xs text-slate-500">₺150</span>
+                    </div>
+                    <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Staff ✓ · Coordinator ✓ · Director pending</p>
+                </li>
+                <li class="py-3">
+                    <div class="flex items-center justify-between gap-3">
+                        <p class="font-medium text-slate-900 dark:text-slate-100">Robotics Competition Prep Camp</p>
+                        <span class="text-xs text-slate-500">₺750</span>
+                    </div>
+                    <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Staff ✓ · Coordinator ✓ · Director pending</p>
+                </li>
+                <li class="py-3">
+                    <div class="flex items-center justify-between gap-3">
+                        <p class="font-medium text-slate-900 dark:text-slate-100">Sudanese Community Service Day</p>
+                        <span class="text-xs text-slate-500">₺165</span>
+                    </div>
+                    <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Staff ✓ · Coordinator ✓ · Director pending</p>
+                </li>
+            </ul>
+        </div>
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+            <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100">Approval pipeline</h3>
+            <div class="mt-5 space-y-4">
+                <div class="flex items-center gap-3">
+                    <span class="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500 text-sm font-bold text-white">1</span>
+                    <div>
+                        <p class="text-sm font-medium text-slate-900 dark:text-slate-100">Directorate Staff</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Initial review complete for inbound finals</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500 text-sm font-bold text-white">2</span>
+                    <div>
+                        <p class="text-sm font-medium text-slate-900 dark:text-slate-100">Unit Coordinator</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Second approval confirmed</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="flex h-9 w-9 items-center justify-center rounded-full border-2 border-blue-500 bg-blue-50 text-sm font-bold text-blue-700 dark:bg-blue-950 dark:text-blue-300">3</span>
+                    <div>
+                        <p class="text-sm font-medium text-slate-900 dark:text-slate-100">Directorate Director</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Your decision notifies the representative</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

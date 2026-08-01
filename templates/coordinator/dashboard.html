@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Coordinator Dashboard | Digital Directorate Management System{% endblock %}
+{% block page_heading %}Dashboard{% endblock %}
+
+{% block content %}
+<section class="mx-auto max-w-6xl space-y-6 pb-10">
+    <header class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Unit Coordinator</p>
+        <h2 class="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">Coordinator overview</h2>
+        <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">Second-stage review of staff decisions, with comments and final handoff to the Director.</p>
+        <a href="{% url 'core:coordinator_view_requests' %}" class="mt-5 inline-flex rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white">Open review queue</a>
+    </header>
+
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <article class="rounded-3xl border border-amber-200 bg-amber-50 p-5 shadow-sm dark:border-amber-800 dark:bg-amber-950/30">
+            <p class="text-xs font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-300">Pending for you</p>
+            <p class="mt-3 text-3xl font-bold text-amber-900 dark:text-amber-200">5</p>
+            <p class="mt-1 text-sm text-amber-700/80 dark:text-amber-400">Staff already decided</p>
+        </article>
+        <article class="rounded-3xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm dark:border-emerald-800 dark:bg-emerald-950/30">
+            <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700 dark:text-emerald-300">You approved</p>
+            <p class="mt-3 text-3xl font-bold text-emerald-900 dark:text-emerald-200">9</p>
+            <p class="mt-1 text-sm text-emerald-700/80 dark:text-emerald-400">Forwarded to director</p>
+        </article>
+        <article class="rounded-3xl border border-red-200 bg-red-50 p-5 shadow-sm dark:border-red-800 dark:bg-red-950/30">
+            <p class="text-xs font-semibold uppercase tracking-wide text-red-700 dark:text-red-300">You rejected</p>
+            <p class="mt-3 text-3xl font-bold text-red-900 dark:text-red-200">2</p>
+            <p class="mt-1 text-sm text-red-700/80 dark:text-red-400">With coordinator comments</p>
+        </article>
+        <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Staff-approved inbound</p>
+            <p class="mt-3 text-3xl font-bold text-slate-900 dark:text-slate-100">4</p>
+            <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Ready this week</p>
+        </article>
+    </div>
+
+    <div class="grid gap-6 lg:grid-cols-5">
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-3 dark:border-slate-700 dark:bg-slate-800">
+            <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100">Needs your attention</h3>
+            <ul class="mt-4 divide-y divide-slate-200 dark:divide-slate-700">
+                <li class="flex items-start justify-between gap-3 py-3">
+                    <div>
+                        <p class="font-medium text-slate-900 dark:text-slate-100">Campus Sustainability Panel</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Staff: Approved · Leyla Cetin</p>
+                    </div>
+                    <span class="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-800 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-300">Pending</span>
+                </li>
+                <li class="flex items-start justify-between gap-3 py-3">
+                    <div>
+                        <p class="font-medium text-slate-900 dark:text-slate-100">Lebanese Cultural Night</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Staff: Rejected · Burak Yildiz</p>
+                    </div>
+                    <span class="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-800 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-300">Pending</span>
+                </li>
+            </ul>
+        </div>
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-2 dark:border-slate-700 dark:bg-slate-800">
+            <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100">Decision balance</h3>
+            <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">Your approvals vs rejections this month.</p>
+            <div class="mt-5 space-y-4">
+                <div>
+                    <div class="mb-1 flex justify-between text-xs"><span class="text-emerald-600 dark:text-emerald-400">Approved</span><span>82%</span></div>
+                    <div class="h-2 rounded-full bg-slate-100 dark:bg-slate-900"><div class="h-2 w-[82%] rounded-full bg-emerald-500"></div></div>
+                </div>
+                <div>
+                    <div class="mb-1 flex justify-between text-xs"><span class="text-red-600 dark:text-red-400">Rejected</span><span>18%</span></div>
+                    <div class="h-2 rounded-full bg-slate-100 dark:bg-slate-900"><div class="h-2 w-[18%] rounded-full bg-red-500"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

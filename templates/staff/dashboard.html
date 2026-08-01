@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Staff Dashboard | Digital Directorate Management System{% endblock %}
+{% block page_heading %}Dashboard{% endblock %}
+
+{% block content %}
+<section class="mx-auto max-w-6xl space-y-6 pb-10">
+    <header class="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between dark:border-slate-700 dark:bg-slate-800">
+        <div>
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Directorate Staff</p>
+            <h2 class="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">Staff overview</h2>
+            <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">First-line review for club and society activity requests, plus representative management.</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+            <a href="{% url 'core:manage_users' %}" class="inline-flex rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700">Manage Users</a>
+            <a href="{% url 'core:staff_view_requests' %}" class="inline-flex rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white">Review Queue</a>
+        </div>
+    </header>
+
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <article class="rounded-3xl border border-amber-200 bg-amber-50 p-5 shadow-sm dark:border-amber-800 dark:bg-amber-950/30">
+            <p class="text-xs font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-300">Pending your review</p>
+            <p class="mt-3 text-3xl font-bold text-amber-900 dark:text-amber-200">7</p>
+            <p class="mt-1 text-sm text-amber-700/80 dark:text-amber-400">New submissions waiting</p>
+        </article>
+        <article class="rounded-3xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm dark:border-emerald-800 dark:bg-emerald-950/30">
+            <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700 dark:text-emerald-300">Approved this week</p>
+            <p class="mt-3 text-3xl font-bold text-emerald-900 dark:text-emerald-200">12</p>
+            <p class="mt-1 text-sm text-emerald-700/80 dark:text-emerald-400">Sent to coordinator</p>
+        </article>
+        <article class="rounded-3xl border border-red-200 bg-red-50 p-5 shadow-sm dark:border-red-800 dark:bg-red-950/30">
+            <p class="text-xs font-semibold uppercase tracking-wide text-red-700 dark:text-red-300">Rejected this week</p>
+            <p class="mt-3 text-3xl font-bold text-red-900 dark:text-red-200">3</p>
+            <p class="mt-1 text-sm text-red-700/80 dark:text-red-400">Returned with comments</p>
+        </article>
+        <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Active representatives</p>
+            <p class="mt-3 text-3xl font-bold text-slate-900 dark:text-slate-100">24</p>
+            <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Clubs & societies</p>
+        </article>
+    </div>
+
+    <div class="grid gap-6 lg:grid-cols-2">
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+            <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100">Queue by organisation type</h3>
+            <div class="mt-5 grid grid-cols-2 gap-4">
+                <div class="rounded-2xl border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-950/30">
+                    <p class="text-sm font-medium text-blue-800 dark:text-blue-300">Clubs</p>
+                    <p class="mt-2 text-2xl font-bold text-blue-950 dark:text-blue-100">4 pending</p>
+                </div>
+                <div class="rounded-2xl border border-violet-200 bg-violet-50 p-4 dark:border-violet-800 dark:bg-violet-950/30">
+                    <p class="text-sm font-medium text-violet-800 dark:text-violet-300">Societies</p>
+                    <p class="mt-2 text-2xl font-bold text-violet-950 dark:text-violet-100">3 pending</p>
+                </div>
+            </div>
+            <ul class="mt-5 space-y-3 text-sm">
+                <li class="flex justify-between gap-3 text-slate-700 dark:text-slate-300"><span>Robotics Innovation Workshop</span><span class="text-slate-500">Club</span></li>
+                <li class="flex justify-between gap-3 text-slate-700 dark:text-slate-300"><span>Sudanese Community Service Day</span><span class="text-slate-500">Society</span></li>
+                <li class="flex justify-between gap-3 text-slate-700 dark:text-slate-300"><span>Photography Exhibition</span><span class="text-slate-500">Club</span></li>
+            </ul>
+        </div>
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+            <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100">Workload tips</h3>
+            <ul class="mt-4 space-y-3 text-sm text-slate-600 dark:text-slate-400">
+                <li class="rounded-2xl border border-slate-200 p-3 dark:border-slate-600">Prioritise requests with event dates within 14 days.</li>
+                <li class="rounded-2xl border border-slate-200 p-3 dark:border-slate-600">Always leave a clear comment when rejecting so representatives can revise.</li>
+                <li class="rounded-2xl border border-slate-200 p-3 dark:border-slate-600">Use Manage Users to assign club or society leaders before peak season.</li>
+            </ul>
+        </div>
+    </div>
+</section>
+{% endblock %}

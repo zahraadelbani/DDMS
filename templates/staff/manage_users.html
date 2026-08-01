@@ -1,0 +1,827 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Users | Digital Directorate Management System{% endblock %}
+{% block page_heading %}Manage Representatives{% endblock %}
+
+{% block content %}
+<section class="mx-auto max-w-6xl space-y-6 pb-10">
+    <header class="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between dark:border-slate-700 dark:bg-slate-800">
+        <div>
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Directorate Staff</p>
+            <h2 class="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">Manage Representatives</h2>
+            <p class="mt-2 max-w-3xl text-sm text-slate-600 dark:text-slate-400">
+                Review student profiles, assign club or society leadership roles, and create new clubs with an appointed leader.
+            </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+            <button type="button" id="openCreateUserBtn"
+                class="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                </svg>
+                Create User
+            </button>
+            <button type="button" id="openCreateClubBtn"
+                class="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Create Club
+            </button>
+        </div>
+    </header>
+
+    <div class="rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <div class="flex flex-col gap-3 border-b border-slate-200 px-5 py-4 sm:flex-row sm:items-center sm:justify-between dark:border-slate-700">
+            <div>
+                <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100">Users</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400">Profile details are read-only. Only the role can be changed.</p>
+            </div>
+            <div class="relative w-full sm:max-w-xs">
+                <input id="userSearch" type="search" placeholder="Search by name, email, or club..."
+                    class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40">
+            </div>
+        </div>
+
+        <div id="tableWrap" class="max-h-[28rem] overflow-auto">
+            <table class="min-w-full border-collapse text-sm">
+                <thead class="sticky top-0 z-10">
+                    <tr class="border-b border-slate-200 bg-slate-50 text-left text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
+                        <th class="px-5 py-4 font-medium">User</th>
+                        <th class="px-5 py-4 font-medium">Email</th>
+                        <th class="px-5 py-4 font-medium">Phone</th>
+                        <th class="px-5 py-4 font-medium">Club / Society</th>
+                        <th class="px-5 py-4 font-medium">Role</th>
+                        <th class="px-5 py-4 text-center font-medium">Edit</th>
+                    </tr>
+                </thead>
+                <tbody id="usersBody" class="divide-y divide-slate-200 dark:divide-slate-700"></tbody>
+            </table>
+        </div>
+        <div id="usersEmpty" class="hidden px-6 py-12 text-center text-sm text-slate-500 dark:text-slate-400">
+            No users match your search.
+        </div>
+    </div>
+</section>
+
+<!-- Create user modal -->
+<div id="createUserModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="createUserTitle">
+    <div id="createUserBackdrop" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div>
+    <div class="relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-3xl border border-slate-200 bg-white p-6 shadow-xl dark:border-slate-700 dark:bg-slate-800">
+        <div class="flex items-start justify-between gap-4">
+            <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">New User</p>
+                <h3 id="createUserTitle" class="mt-1 text-lg font-semibold text-slate-900 dark:text-slate-100">Create User</h3>
+                <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Add a student profile. Role can be assigned now or later.</p>
+            </div>
+            <button type="button" id="closeCreateUserModal" class="rounded-lg border border-slate-200 p-2 text-slate-500 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-400 dark:hover:bg-slate-700" aria-label="Close">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+
+        <form id="createUserForm" class="mt-5 grid gap-4" novalidate>
+            <div>
+                <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Profile Image</span>
+                <div class="flex items-center gap-4">
+                    <img id="userAvatarPreview" src="" alt="" class="hidden h-16 w-16 rounded-full border border-slate-200 object-cover dark:border-slate-600">
+                    <div id="userAvatarPlaceholder" class="flex h-16 w-16 items-center justify-center rounded-full border border-slate-200 bg-slate-100 text-xs text-slate-400 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-500">Photo</div>
+                    <label for="userAvatarInput" class="cursor-pointer rounded-xl border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700">
+                        Upload image
+                        <input id="userAvatarInput" type="file" accept="image/*" class="hidden">
+                    </label>
+                </div>
+            </div>
+
+            <label>
+                <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Full Name</span>
+                <input id="newUserName" type="text" required
+                    class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40"
+                    placeholder="e.g. Sara Ali">
+            </label>
+
+            <label>
+                <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Student ID</span>
+                <input id="newUserStudentId" type="text" required
+                    class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40"
+                    placeholder="e.g. S2026-04001">
+            </label>
+
+            <label>
+                <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Email</span>
+                <input id="newUserEmail" type="email" required
+                    class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40"
+                    placeholder="name@emu.edu.tr">
+            </label>
+
+            <label>
+                <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Phone</span>
+                <input id="newUserPhone" type="tel" required
+                    class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40"
+                    placeholder="+90 555 000 0000">
+            </label>
+
+            <label>
+                <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Role</span>
+                <select id="newUserRole"
+                    class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40">
+                    <option value="student">Student</option>
+                    <option value="club">Club Representative</option>
+                    <option value="society">Society Representative</option>
+                </select>
+            </label>
+
+            <label id="newUserOrgWrap" class="hidden">
+                <span id="newUserOrgLabel" class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Select Club</span>
+                <select id="newUserOrg"
+                    class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40"></select>
+            </label>
+
+            <div class="flex justify-end gap-2 pt-2">
+                <button type="button" id="cancelCreateUser" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700">Cancel</button>
+                <button type="submit" class="rounded-xl bg-slate-900 px-5 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white">Create User</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Create club modal -->
+<div id="createClubModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="createClubTitle">
+    <div id="createClubBackdrop" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div>
+    <div class="relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-3xl border border-slate-200 bg-white p-6 shadow-xl dark:border-slate-700 dark:bg-slate-800">
+        <div class="flex items-start justify-between gap-4">
+            <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">New Club</p>
+                <h3 id="createClubTitle" class="mt-1 text-lg font-semibold text-slate-900 dark:text-slate-100">Create Club</h3>
+                <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Provide the club details and assign a leader.</p>
+            </div>
+            <button type="button" id="closeCreateClubModal" class="rounded-lg border border-slate-200 p-2 text-slate-500 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-400 dark:hover:bg-slate-700" aria-label="Close">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+
+        <form id="createClubForm" class="mt-5 grid gap-4" novalidate>
+            <label>
+                <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Club Name</span>
+                <input id="clubName" type="text" required
+                    class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40"
+                    placeholder="e.g. EMU Debate Club">
+            </label>
+
+            <label>
+                <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Assign Leader</span>
+                <select id="clubLeader" required
+                    class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40">
+                </select>
+            </label>
+
+            <label>
+                <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Description</span>
+                <textarea id="clubDescription" rows="3" required
+                    class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40"
+                    placeholder="Brief description of the club's purpose and activities"></textarea>
+            </label>
+
+            <div>
+                <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Club Logo</span>
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+                    <label for="clubLogoInput" id="clubLogoDrop"
+                        class="flex min-h-28 flex-1 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 p-4 text-center transition hover:border-blue-500 hover:bg-blue-50 dark:border-slate-600 dark:bg-slate-900 dark:hover:border-blue-400 dark:hover:bg-blue-950/40">
+                        <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Upload logo image</span>
+                        <span class="mt-1 text-xs text-slate-500 dark:text-slate-400">PNG or JPG recommended</span>
+                        <input id="clubLogoInput" type="file" accept="image/*" class="hidden">
+                    </label>
+                    <div class="flex items-center gap-3">
+                        <img id="clubLogoPreview" src="" alt="" class="hidden h-20 w-20 rounded-2xl border border-slate-200 object-cover dark:border-slate-600">
+                        <div id="clubLogoPlaceholder" class="flex h-20 w-20 items-center justify-center rounded-2xl border border-slate-200 bg-slate-100 text-xs text-slate-400 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-500">No logo</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-2">
+                <button type="button" id="cancelCreateClub" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700">Cancel</button>
+                <button type="submit" class="rounded-xl bg-slate-900 px-5 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white">Create Club</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit user modal -->
+<div id="editModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
+    <div id="editBackdrop" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div>
+    <div class="relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-3xl border border-slate-200 bg-white p-6 shadow-xl dark:border-slate-700 dark:bg-slate-800">
+        <div class="flex items-start justify-between gap-4">
+            <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">User Details</p>
+                <h3 id="editModalTitle" class="mt-1 text-lg font-semibold text-slate-900 dark:text-slate-100">Edit Role</h3>
+            </div>
+            <button type="button" id="closeEditModal" class="rounded-lg border border-slate-200 p-2 text-slate-500 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-400 dark:hover:bg-slate-700" aria-label="Close">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+
+        <div class="mt-5 flex items-center gap-4">
+            <img id="editAvatar" src="" alt="" class="h-16 w-16 rounded-full border border-slate-200 object-cover dark:border-slate-600">
+            <div>
+                <p id="editName" class="text-base font-semibold text-slate-900 dark:text-slate-100"></p>
+                <p id="editStudentId" class="text-sm text-slate-500 dark:text-slate-400"></p>
+            </div>
+        </div>
+
+        <div class="mt-5 grid gap-4">
+            <label>
+                <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Email</span>
+                <input id="editEmail" type="email" readonly class="w-full cursor-not-allowed rounded-xl border border-slate-200 bg-slate-100 px-3 py-2 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300">
+            </label>
+            <label>
+                <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Phone</span>
+                <input id="editPhone" type="text" readonly class="w-full cursor-not-allowed rounded-xl border border-slate-200 bg-slate-100 px-3 py-2 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300">
+            </label>
+            <label>
+                <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Current Club / Society</span>
+                <input id="editCurrentOrg" type="text" readonly class="w-full cursor-not-allowed rounded-xl border border-slate-200 bg-slate-100 px-3 py-2 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300">
+            </label>
+            <label>
+                <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Role</span>
+                <select id="editRole" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40">
+                    <option value="student">Student</option>
+                    <option value="club">Club Representative</option>
+                    <option value="society">Society Representative</option>
+                </select>
+            </label>
+            <label id="orgSelectWrap" class="hidden">
+                <span id="orgSelectLabel" class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Select Club</span>
+                <select id="editOrg" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40"></select>
+            </label>
+        </div>
+
+        <div class="mt-6 flex justify-end gap-2">
+            <button type="button" id="cancelEditModal" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700">Cancel</button>
+            <button type="button" id="saveRoleBtn" class="rounded-xl bg-slate-900 px-5 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white">Save Role</button>
+        </div>
+    </div>
+</div>
+
+<!-- Leader conflict confirm modal -->
+<div id="conflictModal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="conflictTitle">
+    <div id="conflictBackdrop" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div>
+    <div class="relative w-full max-w-md rounded-3xl border border-amber-200 bg-white p-6 shadow-xl dark:border-amber-800 dark:bg-slate-800">
+        <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" /></svg>
+        </div>
+        <h3 id="conflictTitle" class="mt-4 text-lg font-semibold text-slate-900 dark:text-slate-100">Only one leader allowed</h3>
+        <p id="conflictMessage" class="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-400"></p>
+        <div class="mt-6 flex justify-end gap-2">
+            <button type="button" id="cancelConflict" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700">Keep current leader</button>
+            <button type="button" id="confirmConflict" class="rounded-xl bg-amber-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-amber-500">Remove leader & assign</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_body %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const avatar = (name) => `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=002147&color=ffffff&size=128`;
+
+    let clubs = [
+        { id: "club-robotics", name: "EMU Robotics Club", type: "club", leaderId: "u1" },
+        { id: "club-debate", name: "EMU Debate Club", type: "club", leaderId: null },
+        { id: "club-music", name: "EMU Music Club", type: "club", leaderId: "u3" },
+        { id: "club-photography", name: "Photography Club", type: "club", leaderId: null }
+    ];
+
+    let societies = [
+        { id: "soc-lebanese", name: "Lebanese Society", type: "society", leaderId: "u2" },
+        { id: "soc-sudanese", name: "Sudanese Society", type: "society", leaderId: null },
+        { id: "soc-nigerian", name: "Nigerian Society", type: "society", leaderId: "u5" },
+        { id: "soc-palestinian", name: "Palestinian Society", type: "society", leaderId: null },
+        { id: "soc-turkish", name: "Turkish Society", type: "society", leaderId: null }
+    ];
+
+    let users = [
+        { id: "u1", name: "Amina Yusuf", email: "amina.yusuf@emu.edu.tr", phone: "+90 555 123 4567", studentId: "S2026-01987", role: "club", orgId: "club-robotics", avatar: avatar("Amina Yusuf") },
+        { id: "u2", name: "Karim Haddad", email: "karim.haddad@emu.edu.tr", phone: "+90 555 234 5678", studentId: "S2025-01142", role: "society", orgId: "soc-lebanese", avatar: avatar("Karim Haddad") },
+        { id: "u3", name: "Elena Petrova", email: "elena.petrova@emu.edu.tr", phone: "+90 555 345 6789", studentId: "S2024-00881", role: "club", orgId: "club-music", avatar: avatar("Elena Petrova") },
+        { id: "u4", name: "Omar Hassan", email: "omar.hassan@emu.edu.tr", phone: "+90 555 456 7890", studentId: "S2026-02210", role: "student", orgId: null, avatar: avatar("Omar Hassan") },
+        { id: "u5", name: "Chioma Okeke", email: "chioma.okeke@emu.edu.tr", phone: "+90 555 567 8901", studentId: "S2025-01533", role: "society", orgId: "soc-nigerian", avatar: avatar("Chioma Okeke") },
+        { id: "u6", name: "Mehmet Demir", email: "mehmet.demir@emu.edu.tr", phone: "+90 555 678 9012", studentId: "S2026-03002", role: "student", orgId: null, avatar: avatar("Mehmet Demir") }
+    ];
+
+    let editingUserId = null;
+    let pendingAssignment = null;
+    let clubLogoDataUrl = "";
+    let userAvatarDataUrl = "";
+    let pendingNewUser = null;
+
+    const usersBody = document.getElementById("usersBody");
+    const usersEmpty = document.getElementById("usersEmpty");
+    const tableWrap = document.getElementById("tableWrap");
+    const userSearch = document.getElementById("userSearch");
+    const editModal = document.getElementById("editModal");
+    const createUserModal = document.getElementById("createUserModal");
+    const createClubModal = document.getElementById("createClubModal");
+    const conflictModal = document.getElementById("conflictModal");
+    const orgSelectWrap = document.getElementById("orgSelectWrap");
+    const editOrg = document.getElementById("editOrg");
+    const editRole = document.getElementById("editRole");
+    const clubLeader = document.getElementById("clubLeader");
+    const createClubForm = document.getElementById("createClubForm");
+    const createUserForm = document.getElementById("createUserForm");
+    const newUserRole = document.getElementById("newUserRole");
+    const newUserOrgWrap = document.getElementById("newUserOrgWrap");
+    const newUserOrg = document.getElementById("newUserOrg");
+
+    function allOrgs() {
+        return [...clubs, ...societies];
+    }
+
+    function findOrg(orgId) {
+        return allOrgs().find((org) => org.id === orgId) || null;
+    }
+
+    function findUser(userId) {
+        return users.find((user) => user.id === userId) || null;
+    }
+
+    function orgLabel(user) {
+        if (!user.orgId) return "—";
+        const org = findOrg(user.orgId);
+        return org ? org.name : "—";
+    }
+
+    function roleLabel(role) {
+        if (role === "club") return "Club Representative";
+        if (role === "society") return "Society Representative";
+        return "Student";
+    }
+
+    function roleBadge(role) {
+        const styles = {
+            club: "border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-300",
+            society: "border-violet-200 bg-violet-50 text-violet-800 dark:border-violet-800 dark:bg-violet-950/40 dark:text-violet-300",
+            student: "border-slate-200 bg-slate-50 text-slate-700 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-300"
+        };
+        return `<span class="inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${styles[role] || styles.student}">${roleLabel(role)}</span>`;
+    }
+
+    function fillLeaderSelect() {
+        clubLeader.innerHTML = `<option value="">Select a leader</option>` + users.map((user) =>
+            `<option value="${user.id}">${user.name} (${user.email})</option>`
+        ).join("");
+    }
+
+    function renderUsers() {
+        const query = userSearch.value.trim().toLowerCase();
+        const filtered = users.filter((user) => {
+            if (!query) return true;
+            const haystack = `${user.name} ${user.email} ${user.phone} ${orgLabel(user)} ${roleLabel(user.role)}`.toLowerCase();
+            return haystack.includes(query);
+        });
+
+        if (!filtered.length) {
+            usersBody.innerHTML = "";
+            tableWrap.classList.add("hidden");
+            usersEmpty.classList.remove("hidden");
+            return;
+        }
+
+        usersEmpty.classList.add("hidden");
+        tableWrap.classList.remove("hidden");
+        usersBody.innerHTML = filtered.map((user) => `
+            <tr class="align-middle transition hover:bg-slate-50/80 dark:hover:bg-slate-900/40">
+                <td class="px-5 py-4">
+                    <div class="flex items-center gap-3">
+                        <img src="${user.avatar}" alt="${user.name}" class="h-10 w-10 rounded-full border border-slate-200 object-cover dark:border-slate-600">
+                        <div>
+                            <p class="font-semibold text-slate-900 dark:text-slate-100">${user.name}</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">${user.studentId}</p>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-5 py-4 text-slate-600 dark:text-slate-400">${user.email}</td>
+                <td class="px-5 py-4 text-slate-600 dark:text-slate-400">${user.phone}</td>
+                <td class="px-5 py-4 text-slate-700 dark:text-slate-300">${orgLabel(user)}</td>
+                <td class="px-5 py-4">${roleBadge(user.role)}</td>
+                <td class="px-5 py-4 text-center">
+                    <button type="button" class="edit-user inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 dark:border-slate-600 dark:text-slate-300 dark:hover:border-blue-700 dark:hover:bg-blue-950/40 dark:hover:text-blue-300"
+                        data-id="${user.id}" title="Edit role" aria-label="Edit ${user.name}">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                    </button>
+                </td>
+            </tr>
+        `).join("");
+    }
+
+    function populateOrgSelect(role, selectedOrgId) {
+        const list = role === "club" ? clubs : societies;
+        document.getElementById("orgSelectLabel").textContent = role === "club" ? "Select Club" : "Select Society";
+        editOrg.innerHTML = `<option value="">Choose ${role === "club" ? "a club" : "a society"}</option>` +
+            list.map((org) => {
+                const leader = org.leaderId ? findUser(org.leaderId) : null;
+                const note = leader ? ` — leader: ${leader.name}` : " — no leader";
+                return `<option value="${org.id}" ${org.id === selectedOrgId ? "selected" : ""}>${org.name}${note}</option>`;
+            }).join("");
+    }
+
+    function syncOrgSelectVisibility() {
+        const role = editRole.value;
+        if (role === "club" || role === "society") {
+            orgSelectWrap.classList.remove("hidden");
+            const user = findUser(editingUserId);
+            const selected = user && user.role === role ? user.orgId : "";
+            populateOrgSelect(role, selected);
+        } else {
+            orgSelectWrap.classList.add("hidden");
+            editOrg.innerHTML = "";
+        }
+    }
+
+    function openEditModal(userId) {
+        const user = findUser(userId);
+        if (!user) return;
+        editingUserId = userId;
+        document.getElementById("editAvatar").src = user.avatar;
+        document.getElementById("editName").textContent = user.name;
+        document.getElementById("editStudentId").textContent = user.studentId;
+        document.getElementById("editEmail").value = user.email;
+        document.getElementById("editPhone").value = user.phone;
+        document.getElementById("editCurrentOrg").value = orgLabel(user);
+        editRole.value = user.role;
+        syncOrgSelectVisibility();
+        editModal.classList.remove("hidden");
+        editModal.classList.add("flex");
+    }
+
+    function closeEditModal() {
+        editModal.classList.add("hidden");
+        editModal.classList.remove("flex");
+        editingUserId = null;
+        pendingAssignment = null;
+    }
+
+    function openConflictModal(message) {
+        document.getElementById("conflictMessage").textContent = message;
+        conflictModal.classList.remove("hidden");
+        conflictModal.classList.add("flex");
+    }
+
+    function closeConflictModal() {
+        conflictModal.classList.add("hidden");
+        conflictModal.classList.remove("flex");
+    }
+
+    function clearUserLeadership(userId) {
+        const user = findUser(userId);
+        if (!user) return;
+        if (user.orgId) {
+            const org = findOrg(user.orgId);
+            if (org && org.leaderId === userId) org.leaderId = null;
+        }
+        user.role = "student";
+        user.orgId = null;
+    }
+
+    function applyAssignment({ userId, role, orgId, replaceLeader }) {
+        const user = findUser(userId);
+        if (!user) return;
+
+        if (role === "student") {
+            clearUserLeadership(userId);
+            renderUsers();
+            fillLeaderSelect();
+            closeEditModal();
+            showToast("Role updated to Student.");
+            return;
+        }
+
+        const org = findOrg(orgId);
+        if (!org) {
+            showToast("Please select a club or society.", true);
+            return;
+        }
+
+        if (org.leaderId && org.leaderId !== userId && !replaceLeader) {
+            const currentLeader = findUser(org.leaderId);
+            pendingAssignment = { userId, role, orgId, replaceLeader: true };
+            const kind = org.type === "club" ? "club" : "society";
+            openConflictModal(
+                `${org.name} already has a leader (${currentLeader ? currentLeader.name : "another user"}). ${kind.charAt(0).toUpperCase() + kind.slice(1)}s can only have one leader. Do you want to remove the current leader and assign ${user.name}?`
+            );
+            return;
+        }
+
+        // Remove this user from any previous leadership first
+        clearUserLeadership(userId);
+
+        if (org.leaderId && org.leaderId !== userId) {
+            clearUserLeadership(org.leaderId);
+        }
+
+        org.leaderId = userId;
+        user.role = role;
+        user.orgId = orgId;
+
+        renderUsers();
+        fillLeaderSelect();
+        closeConflictModal();
+        closeEditModal();
+        showToast(`Assigned ${user.name} as leader of ${org.name}.`);
+    }
+
+    function showToast(message, isError = false) {
+        const toast = document.createElement("div");
+        toast.className = isError
+            ? "fixed right-4 top-20 z-[70] rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700 shadow dark:border-red-800 dark:bg-red-950 dark:text-red-300"
+            : "fixed right-4 top-20 z-[70] rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700 shadow dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-300";
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2600);
+    }
+
+    function resetClubLogo() {
+        clubLogoDataUrl = "";
+        const preview = document.getElementById("clubLogoPreview");
+        const placeholder = document.getElementById("clubLogoPlaceholder");
+        preview.src = "";
+        preview.classList.add("hidden");
+        placeholder.classList.remove("hidden");
+        document.getElementById("clubLogoInput").value = "";
+    }
+
+    function resetUserAvatar() {
+        userAvatarDataUrl = "";
+        const preview = document.getElementById("userAvatarPreview");
+        const placeholder = document.getElementById("userAvatarPlaceholder");
+        preview.src = "";
+        preview.classList.add("hidden");
+        placeholder.classList.remove("hidden");
+        document.getElementById("userAvatarInput").value = "";
+    }
+
+    function populateNewUserOrgSelect(role) {
+        const list = role === "club" ? clubs : societies;
+        document.getElementById("newUserOrgLabel").textContent = role === "club" ? "Select Club" : "Select Society";
+        newUserOrg.innerHTML = `<option value="">Choose ${role === "club" ? "a club" : "a society"}</option>` +
+            list.map((org) => {
+                const leader = org.leaderId ? findUser(org.leaderId) : null;
+                const note = leader ? ` — leader: ${leader.name}` : " — no leader";
+                return `<option value="${org.id}">${org.name}${note}</option>`;
+            }).join("");
+    }
+
+    function syncNewUserOrgVisibility() {
+        const role = newUserRole.value;
+        if (role === "club" || role === "society") {
+            newUserOrgWrap.classList.remove("hidden");
+            populateNewUserOrgSelect(role);
+        } else {
+            newUserOrgWrap.classList.add("hidden");
+            newUserOrg.innerHTML = "";
+        }
+    }
+
+    function openCreateUserModal() {
+        syncNewUserOrgVisibility();
+        createUserModal.classList.remove("hidden");
+        createUserModal.classList.add("flex");
+    }
+
+    function closeCreateUserModal() {
+        createUserModal.classList.add("hidden");
+        createUserModal.classList.remove("flex");
+        createUserForm.reset();
+        resetUserAvatar();
+        newUserOrgWrap.classList.add("hidden");
+        pendingNewUser = null;
+    }
+
+    function openCreateClubModal() {
+        fillLeaderSelect();
+        createClubModal.classList.remove("hidden");
+        createClubModal.classList.add("flex");
+    }
+
+    function closeCreateClubModal() {
+        createClubModal.classList.add("hidden");
+        createClubModal.classList.remove("flex");
+        createClubForm.reset();
+        resetClubLogo();
+    }
+
+    function finalizeCreateUser(replaceLeader = false) {
+        if (!pendingNewUser) return;
+        const { name, email, phone, studentId, role, orgId, avatarUrl } = pendingNewUser;
+
+        if ((role === "club" || role === "society") && orgId) {
+            const org = findOrg(orgId);
+            if (org?.leaderId && !replaceLeader) {
+                const currentLeader = findUser(org.leaderId);
+                const kind = org.type === "club" ? "club" : "society";
+                openConflictModal(
+                    `${org.name} already has a leader (${currentLeader ? currentLeader.name : "another user"}). ${kind.charAt(0).toUpperCase() + kind.slice(1)}s can only have one leader. Do you want to remove the current leader and assign ${name}?`
+                );
+                return;
+            }
+        }
+
+        const newUser = {
+            id: `u-${Date.now()}`,
+            name,
+            email,
+            phone,
+            studentId,
+            role: "student",
+            orgId: null,
+            avatar: avatarUrl
+        };
+        users.push(newUser);
+
+        if (role === "student" || !orgId) {
+            pendingNewUser = null;
+            closeConflictModal();
+            closeCreateUserModal();
+            renderUsers();
+            fillLeaderSelect();
+            showToast(`${name} was added as a student.`);
+            return;
+        }
+
+        applyAssignment({ userId: newUser.id, role, orgId, replaceLeader: true });
+        pendingNewUser = null;
+        closeCreateUserModal();
+    }
+
+    usersBody.addEventListener("click", (event) => {
+        const btn = event.target.closest(".edit-user");
+        if (btn) openEditModal(btn.dataset.id);
+    });
+
+    userSearch.addEventListener("input", renderUsers);
+    editRole.addEventListener("change", syncOrgSelectVisibility);
+    newUserRole.addEventListener("change", syncNewUserOrgVisibility);
+
+    document.getElementById("openCreateUserBtn").addEventListener("click", openCreateUserModal);
+    document.getElementById("closeCreateUserModal").addEventListener("click", closeCreateUserModal);
+    document.getElementById("cancelCreateUser").addEventListener("click", closeCreateUserModal);
+    document.getElementById("createUserBackdrop").addEventListener("click", closeCreateUserModal);
+
+    document.getElementById("openCreateClubBtn").addEventListener("click", openCreateClubModal);
+    document.getElementById("closeCreateClubModal").addEventListener("click", closeCreateClubModal);
+    document.getElementById("cancelCreateClub").addEventListener("click", closeCreateClubModal);
+    document.getElementById("createClubBackdrop").addEventListener("click", closeCreateClubModal);
+
+    document.getElementById("closeEditModal").addEventListener("click", closeEditModal);
+    document.getElementById("cancelEditModal").addEventListener("click", closeEditModal);
+    document.getElementById("editBackdrop").addEventListener("click", closeEditModal);
+
+    document.getElementById("saveRoleBtn").addEventListener("click", () => {
+        const role = editRole.value;
+        const orgId = editOrg.value || null;
+        if ((role === "club" || role === "society") && !orgId) {
+            showToast(`Please select a ${role === "club" ? "club" : "society"}.`, true);
+            return;
+        }
+        applyAssignment({ userId: editingUserId, role, orgId, replaceLeader: false });
+    });
+
+    document.getElementById("cancelConflict").addEventListener("click", () => {
+        pendingAssignment = null;
+        closeConflictModal();
+    });
+    document.getElementById("conflictBackdrop").addEventListener("click", () => {
+        pendingAssignment = null;
+        closeConflictModal();
+    });
+    document.getElementById("confirmConflict").addEventListener("click", () => {
+        if (pendingNewUser) {
+            finalizeCreateUser(true);
+            return;
+        }
+        if (!pendingAssignment) return;
+        applyAssignment(pendingAssignment);
+        pendingAssignment = null;
+    });
+
+    document.getElementById("userAvatarInput").addEventListener("change", (event) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+            userAvatarDataUrl = String(reader.result || "");
+            const preview = document.getElementById("userAvatarPreview");
+            const placeholder = document.getElementById("userAvatarPlaceholder");
+            preview.src = userAvatarDataUrl;
+            preview.classList.remove("hidden");
+            placeholder.classList.add("hidden");
+        };
+        reader.readAsDataURL(file);
+    });
+
+    document.getElementById("clubLogoInput").addEventListener("change", (event) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+            clubLogoDataUrl = String(reader.result || "");
+            const preview = document.getElementById("clubLogoPreview");
+            const placeholder = document.getElementById("clubLogoPlaceholder");
+            preview.src = clubLogoDataUrl;
+            preview.classList.remove("hidden");
+            placeholder.classList.add("hidden");
+        };
+        reader.readAsDataURL(file);
+    });
+
+    createUserForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const name = document.getElementById("newUserName").value.trim();
+        const studentId = document.getElementById("newUserStudentId").value.trim();
+        const email = document.getElementById("newUserEmail").value.trim();
+        const phone = document.getElementById("newUserPhone").value.trim();
+        const role = newUserRole.value;
+        const orgId = newUserOrg.value || null;
+
+        if (!name || !studentId || !email || !phone) {
+            showToast("Please fill in all required user fields.", true);
+            return;
+        }
+
+        if ((role === "club" || role === "society") && !orgId) {
+            showToast(`Please select a ${role === "club" ? "club" : "society"}.`, true);
+            return;
+        }
+
+        if (users.some((user) => user.email.toLowerCase() === email.toLowerCase())) {
+            showToast("A user with this email already exists.", true);
+            return;
+        }
+
+        pendingNewUser = {
+            name,
+            studentId,
+            email,
+            phone,
+            role,
+            orgId,
+            avatarUrl: userAvatarDataUrl || avatar(name)
+        };
+        finalizeCreateUser(false);
+    });
+
+    createClubForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const name = document.getElementById("clubName").value.trim();
+        const description = document.getElementById("clubDescription").value.trim();
+        const leaderId = clubLeader.value;
+
+        if (!name || !description || !leaderId) {
+            showToast("Please fill in club name, description, and leader.", true);
+            return;
+        }
+
+        const leader = findUser(leaderId);
+        const newClub = {
+            id: `club-${Date.now()}`,
+            name,
+            type: "club",
+            leaderId,
+            description,
+            logo: clubLogoDataUrl || avatar(name)
+        };
+
+        clearUserLeadership(leaderId);
+        clubs.push(newClub);
+        leader.role = "club";
+        leader.orgId = newClub.id;
+
+        closeCreateClubModal();
+        renderUsers();
+        fillLeaderSelect();
+        showToast(`${newClub.name} created and ${leader.name} assigned as leader.`);
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return;
+        if (!conflictModal.classList.contains("hidden")) {
+            pendingAssignment = null;
+            closeConflictModal();
+            return;
+        }
+        if (!createUserModal.classList.contains("hidden")) {
+            closeCreateUserModal();
+            return;
+        }
+        if (!createClubModal.classList.contains("hidden")) {
+            closeCreateClubModal();
+            return;
+        }
+        if (!editModal.classList.contains("hidden")) closeEditModal();
+    });
+
+    fillLeaderSelect();
+    renderUsers();
+});
+</script>
+{% endblock %}

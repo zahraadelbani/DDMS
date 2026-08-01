@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 @source "../../../templates/**/*.html";
 @source "../../../apps/**/*.{html,py,js}";
 @source "../../../static/**/*.js";

@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block title %}Profile | Digital Directorate Management System{% endblock %}
+{% block page_heading %}Profile{% endblock %}
+
+{% block content %}
+<section class="mx-auto max-w-3xl space-y-6 pb-10">
+    <header class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Account</p>
+                <h2 class="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">My Profile</h2>
+                <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">View your account details and role affiliation.</p>
+            </div>
+            <label class="w-full sm:w-auto">
+                <span class="mb-1 block text-xs font-medium text-slate-500 dark:text-slate-400">Preview as role (dev)</span>
+                <select id="rolePreview" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40 sm:min-w-[14rem]">
+                    <option value="representative">Representative</option>
+                    <option value="staff">Staff</option>
+                    <option value="coordinator">Coordinator</option>
+                    <option value="director">Director</option>
+                </select>
+            </label>
+        </div>
+    </header>
+
+    <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <div class="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-center sm:text-left">
+            <img id="profileAvatar" src="" alt="" class="h-24 w-24 rounded-full border-2 border-slate-200 object-cover dark:border-slate-600">
+            <div class="min-w-0">
+                <h3 id="profileName" class="text-xl font-bold text-slate-900 dark:text-slate-100"></h3>
+                <p id="profileRoleBadge" class="mt-2"></p>
+            </div>
+        </div>
+
+        <dl class="mt-8 grid gap-4 sm:grid-cols-2">
+            <div class="rounded-2xl border border-slate-200 p-4 dark:border-slate-600">
+                <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Full name</dt>
+                <dd id="profileNameField" class="mt-2 text-sm font-medium text-slate-900 dark:text-slate-100"></dd>
+            </div>
+            <div class="rounded-2xl border border-slate-200 p-4 dark:border-slate-600">
+                <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Email</dt>
+                <dd id="profileEmail" class="mt-2 break-all text-sm font-medium text-slate-900 dark:text-slate-100"></dd>
+            </div>
+            <div class="rounded-2xl border border-slate-200 p-4 dark:border-slate-600">
+                <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Role</dt>
+                <dd id="profileRole" class="mt-2 text-sm font-medium text-slate-900 dark:text-slate-100"></dd>
+            </div>
+            <div id="affiliationCard" class="rounded-2xl border border-slate-200 p-4 dark:border-slate-600">
+                <dt id="affiliationLabel" class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Affiliation</dt>
+                <dd id="affiliationValue" class="mt-2 text-sm font-medium text-slate-900 dark:text-slate-100"></dd>
+                <p id="affiliationMeta" class="mt-1 text-xs text-slate-500 dark:text-slate-400"></p>
+            </div>
+        </dl>
+    </div>
+
+    <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100">Change password</h3>
+                <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Update your account password. New staff accounts should change the default password after first login.</p>
+            </div>
+        </div>
+
+        <form id="changePasswordForm" class="mt-5 grid gap-4" novalidate>
+            <label>
+                <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Current password</span>
+                <input id="currentPassword" type="password" required autocomplete="current-password"
+                    class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40"
+                    placeholder="Enter current password">
+            </label>
+            <label>
+                <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">New password</span>
+                <input id="newPassword" type="password" required autocomplete="new-password" minlength="8"
+                    class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40"
+                    placeholder="At least 8 characters">
+            </label>
+            <label>
+                <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Confirm new password</span>
+                <input id="confirmPassword" type="password" required autocomplete="new-password" minlength="8"
+                    class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40"
+                    placeholder="Re-enter new password">
+            </label>
+            <p id="passwordFeedback" class="hidden text-sm"></p>
+            <div class="flex justify-end">
+                <button type="submit" class="rounded-xl bg-slate-900 px-5 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white">Update password</button>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_body %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const avatar = (name) => `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=002147&color=ffffff&size=128`;
+
+    const profiles = {
+        representative: {
+            name: "Amina Yusuf",
+            email: "amina.yusuf@emu.edu.tr",
+            role: "Club Representative",
+            roleKey: "representative",
+            affiliationLabel: "Club / Society",
+            affiliationValue: "EMU Robotics Club",
+            affiliationMeta: "Club leader",
+            badgeClass: "border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-300"
+        },
+        staff: {
+            name: "Leyla Cetin",
+            email: "leyla.cetin@emu.edu.tr",
+            role: "Directorate Staff",
+            roleKey: "staff",
+            affiliationLabel: "Leads / Oversees",
+            affiliationValue: "Student Clubs & Societies Unit",
+            affiliationMeta: "Reviews activity requests and manages representatives",
+            badgeClass: "border-slate-200 bg-slate-50 text-slate-700 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-300"
+        },
+        coordinator: {
+            name: "Can Ozturk",
+            email: "can.ozturk@emu.edu.tr",
+            role: "Unit Coordinator",
+            roleKey: "coordinator",
+            affiliationLabel: "Position",
+            affiliationValue: "Unit Coordinator",
+            affiliationMeta: "Second-stage approval for activity requests",
+            badgeClass: "border-violet-200 bg-violet-50 text-violet-800 dark:border-violet-800 dark:bg-violet-950/40 dark:text-violet-300"
+        },
+        director: {
+            name: "Prof. Deniz Arslan",
+            email: "deniz.arslan@emu.edu.tr",
+            role: "Directorate Director",
+            roleKey: "director",
+            affiliationLabel: "Position",
+            affiliationValue: "Directorate Director",
+            affiliationMeta: "Final authority on activity request decisions",
+            badgeClass: "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300"
+        }
+    };
+
+    // Optional query override: /profile/?role=staff
+    const params = new URLSearchParams(window.location.search);
+    const initialRole = params.get("role") || localStorage.getItem("ddms_profile_role") || "representative";
+    const rolePreview = document.getElementById("rolePreview");
+    if (profiles[initialRole]) rolePreview.value = initialRole;
+
+    function renderProfile(roleKey) {
+        const profile = profiles[roleKey] || profiles.representative;
+        localStorage.setItem("ddms_profile_role", roleKey);
+
+        document.getElementById("profileAvatar").src = avatar(profile.name);
+        document.getElementById("profileAvatar").alt = profile.name;
+        document.getElementById("profileName").textContent = profile.name;
+        document.getElementById("profileNameField").textContent = profile.name;
+        document.getElementById("profileEmail").textContent = profile.email;
+        document.getElementById("profileRole").textContent = profile.role;
+        document.getElementById("profileRoleBadge").innerHTML =
+            `<span class="inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${profile.badgeClass}">${profile.role}</span>`;
+        document.getElementById("affiliationLabel").textContent = profile.affiliationLabel;
+        document.getElementById("affiliationValue").textContent = profile.affiliationValue;
+        document.getElementById("affiliationMeta").textContent = profile.affiliationMeta;
+    }
+
+    rolePreview.addEventListener("change", () => renderProfile(rolePreview.value));
+    renderProfile(rolePreview.value);
+
+    const changePasswordForm = document.getElementById("changePasswordForm");
+    const passwordFeedback = document.getElementById("passwordFeedback");
+
+    changePasswordForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const currentPassword = document.getElementById("currentPassword").value;
+        const newPassword = document.getElementById("newPassword").value;
+        const confirmPassword = document.getElementById("confirmPassword").value;
+
+        passwordFeedback.classList.remove("hidden", "text-red-600", "dark:text-red-400", "text-emerald-600", "dark:text-emerald-400");
+
+        if (!currentPassword || !newPassword || !confirmPassword) {
+            passwordFeedback.textContent = "Please fill in all password fields.";
+            passwordFeedback.classList.add("text-red-600", "dark:text-red-400");
+            return;
+        }
+        if (newPassword.length < 8) {
+            passwordFeedback.textContent = "New password must be at least 8 characters.";
+            passwordFeedback.classList.add("text-red-600", "dark:text-red-400");
+            return;
+        }
+        if (newPassword !== confirmPassword) {
+            passwordFeedback.textContent = "New password and confirmation do not match.";
+            passwordFeedback.classList.add("text-red-600", "dark:text-red-400");
+            return;
+        }
+        if (newPassword === currentPassword) {
+            passwordFeedback.textContent = "New password must be different from the current password.";
+            passwordFeedback.classList.add("text-red-600", "dark:text-red-400");
+            return;
+        }
+
+        passwordFeedback.textContent = "Password updated successfully (demo). Use this after receiving a default staff password.";
+        passwordFeedback.classList.add("text-emerald-600", "dark:text-emerald-400");
+        changePasswordForm.reset();
+    });
+});
+</script>
+{% endblock %}

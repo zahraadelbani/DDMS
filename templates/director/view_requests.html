@@ -1,0 +1,493 @@
+{% extends "base.html" %}
+
+{% block title %}Director Review | Digital Directorate Management System{% endblock %}
+{% block page_heading %}Final Review{% endblock %}
+
+{% block content %}
+<section class="mx-auto max-w-6xl space-y-6 pb-10">
+    <header class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Directorate Director</p>
+        <h2 class="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">Final Activity Request Review</h2>
+        <p class="mt-2 max-w-3xl text-sm text-slate-600 dark:text-slate-400">
+            Review requests already approved by Directorate Staff and the Unit Coordinator. Your decision is final and notifies the representative.
+        </p>
+    </header>
+
+    <div class="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5 dark:border-slate-700 dark:bg-slate-800">
+        <div class="flex flex-col gap-4">
+            <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                <p class="text-sm font-medium text-slate-700 dark:text-slate-300">Filter by your decision</p>
+                <div id="statusFilters" class="flex flex-wrap gap-2" role="tablist" aria-label="Director status filters">
+                    <button type="button" data-status="all" class="status-btn rounded-xl border px-4 py-2 text-sm font-medium transition">All</button>
+                    <button type="button" data-status="pending" class="status-btn rounded-xl border px-4 py-2 text-sm font-medium transition">Pending</button>
+                    <button type="button" data-status="approved" class="status-btn rounded-xl border px-4 py-2 text-sm font-medium transition">Approved</button>
+                    <button type="button" data-status="rejected" class="status-btn rounded-xl border px-4 py-2 text-sm font-medium transition">Rejected</button>
+                </div>
+            </div>
+            <div class="border-t border-slate-200 pt-4 dark:border-slate-700">
+                <label class="block w-full sm:max-w-sm">
+                    <span class="mb-1 block text-xs font-medium text-slate-500 dark:text-slate-400">Search requests</span>
+                    <input id="requestSearch" type="search" placeholder="Search by request no., activity, org, or representative..."
+                        class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40">
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <div id="tableWrap" class="hidden max-h-[28rem] overflow-auto">
+            <table class="min-w-full border-collapse text-sm">
+                <thead class="sticky top-0 z-10">
+                    <tr class="border-b border-slate-200 bg-slate-50 text-left text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
+                        <th class="px-5 py-4 font-medium">Request No.</th>
+                        <th class="px-5 py-4 font-medium">Activity</th>
+                        <th class="px-5 py-4 font-medium">Organisation</th>
+                        <th class="px-5 py-4 font-medium">Approval Timeline</th>
+                        <th class="px-5 py-4 font-medium">Your Decision</th>
+                        <th class="px-5 py-4 text-center font-medium">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="requestsBody" class="divide-y divide-slate-200 dark:divide-slate-700"></tbody>
+            </table>
+        </div>
+        <div id="emptyState" class="hidden px-6 py-16 text-center">
+            <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 text-slate-500 dark:bg-slate-900 dark:text-slate-400">
+                <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+            </div>
+            <h3 class="mt-5 text-xl font-semibold text-slate-900 dark:text-slate-100">No requests found</h3>
+            <p class="mx-auto mt-2 max-w-md text-sm text-slate-600 dark:text-slate-400">No dual-approved submissions match the current filter.</p>
+        </div>
+    </div>
+</section>
+
+<div id="detailModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+    <div id="detailBackdrop" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div>
+    <div class="relative flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800">
+        <div class="flex items-start justify-between gap-4 border-b border-slate-200 px-6 py-5 dark:border-slate-700">
+            <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Full Request</p>
+                <h3 id="detailTitle" class="mt-1 text-lg font-semibold text-slate-900 dark:text-slate-100"></h3>
+                <p id="detailMeta" class="mt-1 text-sm text-slate-500 dark:text-slate-400"></p>
+            </div>
+            <button type="button" id="closeDetailModal" class="rounded-lg border border-slate-200 p-2 text-slate-500 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-400 dark:hover:bg-slate-700" aria-label="Close">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+        <div id="detailContent" class="flex-1 space-y-4 overflow-y-auto px-6 py-5"></div>
+        <div id="detailActions" class="flex flex-wrap items-center justify-end gap-2 border-t border-slate-200 bg-slate-50 px-6 py-4 dark:border-slate-700 dark:bg-slate-900/50"></div>
+    </div>
+</div>
+
+<div id="confirmModal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <div id="confirmBackdrop" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div>
+    <div class="relative w-full max-w-md rounded-3xl border border-slate-200 bg-white p-6 shadow-xl dark:border-slate-700 dark:bg-slate-800">
+        <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" /></svg>
+        </div>
+        <h3 id="confirmTitle" class="mt-4 text-lg font-semibold text-slate-900 dark:text-slate-100">Are you sure?</h3>
+        <p id="confirmMessage" class="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-400"></p>
+        <label class="mt-4 block">
+            <span class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Comment (optional)</span>
+            <textarea id="confirmComment" rows="3" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40" placeholder="Add a note for the record..."></textarea>
+        </label>
+        <div class="mt-6 flex justify-end gap-2">
+            <button type="button" id="cancelConfirm" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700">Cancel</button>
+            <button type="button" id="confirmDecision" class="rounded-xl px-5 py-2 text-sm font-semibold text-white transition"></button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_body %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const avatar = (name) => `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=002147&color=ffffff&size=128`;
+    const stages = ["Directorate Staff", "Unit Coordinator", "Directorate Director"];
+
+    // Only requests approved by both staff and coordinator reach the director.
+    let requests = [
+        {
+            id: "REQ-2026-013904",
+            title: "Campus Sustainability Panel",
+            orgType: "club",
+            orgName: "EMU Debate Club",
+            representative: "Omar Hassan",
+            submittedAt: "2026-07-12T14:40:00",
+            staffStatus: "approved",
+            staffComment: "Clear agenda and low budget impact.",
+            staffReviewer: { name: "Leyla Cetin", avatar: avatar("Leyla Cetin") },
+            coordinatorStatus: "approved",
+            coordinatorComment: "Confirmed for final director review.",
+            coordinatorReviewer: { name: "Can Ozturk", avatar: avatar("Can Ozturk") },
+            directorStatus: "pending",
+            directorComment: "",
+            activity: { purpose: "Panel on campus sustainability.", type: "Panel", venue: "Central Lecture Hall", participants: 120, start: "2026-08-05T16:00", end: "2026-08-05T18:00", budget: 150 }
+        },
+        {
+            id: "REQ-2026-010441",
+            title: "Music Club Open Mic Night",
+            orgType: "club",
+            orgName: "EMU Music Club",
+            representative: "Elena Petrova",
+            submittedAt: "2026-05-22T11:30:00",
+            staffStatus: "approved",
+            staffComment: "Standard recurring event.",
+            staffReviewer: { name: "Leyla Cetin", avatar: avatar("Leyla Cetin") },
+            coordinatorStatus: "approved",
+            coordinatorComment: "Technical needs are reasonable.",
+            coordinatorReviewer: { name: "Can Ozturk", avatar: avatar("Can Ozturk") },
+            directorStatus: "approved",
+            directorComment: "Approved. Notify representative and proceed with venue booking.",
+            activity: { purpose: "Student open mic evening.", type: "Social", venue: "Cafe Agora Stage", participants: 80, start: "2026-07-18T19:00", end: "2026-07-18T22:00", budget: 180 }
+        },
+        {
+            id: "REQ-2026-008440",
+            title: "Robotics Competition Prep Camp",
+            orgType: "club",
+            orgName: "EMU Robotics Club",
+            representative: "Amina Yusuf",
+            submittedAt: "2026-04-18T09:45:00",
+            staffStatus: "approved",
+            staffComment: "Risk assessment now attached.",
+            staffReviewer: { name: "Burak Yildiz", avatar: avatar("Burak Yildiz") },
+            coordinatorStatus: "approved",
+            coordinatorComment: "Ready for final approval.",
+            coordinatorReviewer: { name: "Can Ozturk", avatar: avatar("Can Ozturk") },
+            directorStatus: "pending",
+            directorComment: "",
+            activity: { purpose: "Two-day prep camp before competition.", type: "Training", venue: "Engineering Lab B1", participants: 25, start: "2026-09-05T09:00", end: "2026-09-06T17:00", budget: 750 }
+        },
+        {
+            id: "REQ-2026-007210",
+            title: "Lebanese Film Screening",
+            orgType: "society",
+            orgName: "Lebanese Society",
+            representative: "Karim Haddad",
+            submittedAt: "2026-03-30T15:20:00",
+            staffStatus: "approved",
+            staffComment: "Venue and licensing confirmed.",
+            staffReviewer: { name: "Selin Akar", avatar: avatar("Selin Akar") },
+            coordinatorStatus: "approved",
+            coordinatorComment: "Schedule fits campus calendar.",
+            coordinatorReviewer: { name: "Can Ozturk", avatar: avatar("Can Ozturk") },
+            directorStatus: "rejected",
+            directorComment: "Conflicts with another university-wide cultural week event.",
+            activity: { purpose: "Documentary screening and discussion.", type: "Cultural", venue: "Auditorium B", participants: 150, start: "2026-06-14T18:00", end: "2026-06-14T21:00", budget: 420 }
+        },
+        {
+            id: "REQ-2026-006155",
+            title: "Sudanese Community Service Day",
+            orgType: "society",
+            orgName: "Sudanese Society",
+            representative: "Fatima Ahmed",
+            submittedAt: "2026-03-10T10:05:00",
+            staffStatus: "approved",
+            staffComment: "Low-cost volunteer activity.",
+            staffReviewer: { name: "Burak Yildiz", avatar: avatar("Burak Yildiz") },
+            coordinatorStatus: "approved",
+            coordinatorComment: "Good community impact.",
+            coordinatorReviewer: { name: "Can Ozturk", avatar: avatar("Can Ozturk") },
+            directorStatus: "pending",
+            directorComment: "",
+            activity: { purpose: "Campus cleanup and awareness booth.", type: "Community Service", venue: "Campus outdoor areas", participants: 40, start: "2026-08-28T09:00", end: "2026-08-28T14:00", budget: 165 }
+        }
+    ];
+
+    let statusFilter = "all";
+    let searchQuery = "";
+    let activeRequestId = null;
+    let pendingDecision = null;
+
+    const requestsBody = document.getElementById("requestsBody");
+    const tableWrap = document.getElementById("tableWrap");
+    const emptyState = document.getElementById("emptyState");
+    const requestSearch = document.getElementById("requestSearch");
+    const detailModal = document.getElementById("detailModal");
+    const confirmModal = document.getElementById("confirmModal");
+    const detailContent = document.getElementById("detailContent");
+    const detailActions = document.getElementById("detailActions");
+
+    function findRequest(id) {
+        return requests.find((item) => item.id === id) || null;
+    }
+
+    function formatDate(value) {
+        return new Date(value).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+    }
+
+    function formatDateTime(value) {
+        return new Date(value).toLocaleString(undefined, {
+            year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"
+        });
+    }
+
+    function statusBadge(status) {
+        const styles = {
+            pending: "border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-300",
+            approved: "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300",
+            rejected: "border-red-200 bg-red-50 text-red-800 dark:border-red-800 dark:bg-red-950/40 dark:text-red-300"
+        };
+        return `<span class="inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${styles[status]}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>`;
+    }
+
+    function stageIcon(status, isCurrent) {
+        if (status === "approved") {
+            return `<span class="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500 text-white"><svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg></span>`;
+        }
+        if (status === "rejected") {
+            return `<span class="flex h-7 w-7 items-center justify-center rounded-full bg-red-500 text-white"><svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" /></svg></span>`;
+        }
+        if (isCurrent) {
+            return `<span class="flex h-7 w-7 items-center justify-center rounded-full border-2 border-blue-500 bg-blue-50 dark:bg-blue-950"><span class="h-2 w-2 animate-pulse rounded-full bg-blue-500"></span></span>`;
+        }
+        return `<span class="flex h-7 w-7 items-center justify-center rounded-full border-2 border-slate-300 dark:border-slate-600"><span class="h-2 w-2 rounded-full bg-slate-300 dark:bg-slate-600"></span></span>`;
+    }
+
+    function timelineMarkup(request) {
+        const statuses = [request.staffStatus, request.coordinatorStatus, request.directorStatus];
+        return `
+            <div class="min-w-[15rem]">
+                <div class="flex items-center">
+                    ${statuses.map((status, idx) => `
+                        <div class="flex items-center ${idx < statuses.length - 1 ? "flex-1" : ""}">
+                            ${idx > 0 ? `<div class="mx-1 h-0.5 flex-1 ${statuses[idx - 1] === "approved" ? "bg-emerald-400" : "bg-slate-200 dark:bg-slate-600"}"></div>` : ""}
+                            ${stageIcon(status, status === "pending" && statuses.slice(0, idx).every((s) => s === "approved"))}
+                        </div>
+                    `).join("")}
+                </div>
+                <div class="mt-2 grid grid-cols-3 gap-1 text-center">
+                    ${stages.map((label) => `<p class="text-[10px] leading-tight text-slate-500 dark:text-slate-400">${label}</p>`).join("")}
+                </div>
+            </div>`;
+    }
+
+    function personRow(label, person, status, comment) {
+        return `
+            <div class="rounded-xl border border-slate-200 p-3 dark:border-slate-600">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-2">
+                        <img src="${person.avatar}" alt="${person.name}" class="h-8 w-8 rounded-full border border-slate-200 object-cover dark:border-slate-600">
+                        <div>
+                            <p class="text-sm font-medium text-slate-800 dark:text-slate-200">${person.name}</p>
+                            <p class="text-[10px] uppercase tracking-wide text-slate-400">${label}</p>
+                        </div>
+                    </div>
+                    ${statusBadge(status)}
+                </div>
+                <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">${comment || "—"}</p>
+            </div>`;
+    }
+
+    function setActiveButtons(value) {
+        document.querySelectorAll(".status-btn").forEach((button) => {
+            const isActive = button.dataset.status === value;
+            button.className = `status-btn rounded-xl border px-4 py-2 text-sm font-medium transition ${
+                isActive
+                    ? "border-blue-500 bg-blue-50 text-blue-700 dark:border-blue-400 dark:bg-blue-950/50 dark:text-blue-300"
+                    : "border-slate-200 text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/60"
+            }`;
+        });
+    }
+
+    function filteredRequests() {
+        const query = searchQuery.trim().toLowerCase();
+        return requests.filter((item) => {
+            if (statusFilter !== "all" && item.directorStatus !== statusFilter) return false;
+            if (!query) return true;
+            return [item.id, item.title, item.orgName, item.representative]
+                .join(" ")
+                .toLowerCase()
+                .includes(query);
+        });
+    }
+
+    function openDetail(id) {
+        const request = findRequest(id);
+        if (!request) return;
+        activeRequestId = id;
+        document.getElementById("detailTitle").textContent = request.title;
+        document.getElementById("detailMeta").textContent = `${request.id} · ${request.orgName} · ${request.representative}`;
+
+        detailContent.innerHTML = `
+            <article class="rounded-2xl border border-slate-200 p-4 dark:border-slate-600">
+                <h4 class="text-sm font-semibold text-slate-900 dark:text-slate-100">Approval Timeline</h4>
+                <div class="mt-4">${timelineMarkup(request)}</div>
+            </article>
+            <article class="rounded-2xl border border-slate-200 p-4 dark:border-slate-600 space-y-3">
+                <h4 class="text-sm font-semibold text-slate-900 dark:text-slate-100">Prior Decisions</h4>
+                ${personRow("Directorate Staff", request.staffReviewer, request.staffStatus, request.staffComment)}
+                ${personRow("Unit Coordinator", request.coordinatorReviewer, request.coordinatorStatus, request.coordinatorComment)}
+            </article>
+            <article class="rounded-2xl border border-slate-200 p-4 dark:border-slate-600">
+                <h4 class="text-sm font-semibold text-slate-900 dark:text-slate-100">Activity Summary</h4>
+                <div class="mt-3 grid gap-2 text-sm text-slate-700 dark:text-slate-300 md:grid-cols-2">
+                    <p><span class="font-medium text-slate-500 dark:text-slate-400">Type:</span> ${request.activity.type}</p>
+                    <p><span class="font-medium text-slate-500 dark:text-slate-400">Venue:</span> ${request.activity.venue}</p>
+                    <p><span class="font-medium text-slate-500 dark:text-slate-400">Participants:</span> ${request.activity.participants}</p>
+                    <p><span class="font-medium text-slate-500 dark:text-slate-400">Budget:</span> ${request.activity.budget.toFixed(2)}</p>
+                    <p class="md:col-span-2"><span class="font-medium text-slate-500 dark:text-slate-400">Purpose:</span> ${request.activity.purpose}</p>
+                    <p><span class="font-medium text-slate-500 dark:text-slate-400">Start:</span> ${formatDateTime(request.activity.start)}</p>
+                    <p><span class="font-medium text-slate-500 dark:text-slate-400">End:</span> ${formatDateTime(request.activity.end)}</p>
+                </div>
+            </article>
+            ${request.directorComment ? `
+                <article class="rounded-2xl border border-slate-200 p-4 dark:border-slate-600">
+                    <h4 class="text-sm font-semibold text-slate-900 dark:text-slate-100">Your Decision</h4>
+                    <div class="mt-2">${statusBadge(request.directorStatus)}</div>
+                    <p class="mt-2 text-sm text-slate-700 dark:text-slate-300">${request.directorComment}</p>
+                </article>` : ""}
+        `;
+
+        detailActions.innerHTML = request.directorStatus === "pending" ? `
+            <button type="button" data-decision="reject" data-id="${request.id}" class="decision-trigger rounded-xl border border-red-300 px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50 dark:border-red-800 dark:text-red-300 dark:hover:bg-red-950/40">Reject</button>
+            <button type="button" data-decision="approve" data-id="${request.id}" class="decision-trigger rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-500">Approve</button>
+        ` : `
+            <div class="mr-auto text-sm text-slate-600 dark:text-slate-400">Final status: ${statusBadge(request.directorStatus)}</div>
+            <button type="button" id="closeDetailFooter" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700">Close</button>
+        `;
+
+        detailModal.classList.remove("hidden");
+        detailModal.classList.add("flex");
+    }
+
+    function closeDetail() {
+        detailModal.classList.add("hidden");
+        detailModal.classList.remove("flex");
+        activeRequestId = null;
+    }
+
+    function openConfirm(id, action) {
+        const request = findRequest(id);
+        if (!request || request.directorStatus !== "pending") return;
+        pendingDecision = { id, action };
+        const isApprove = action === "approve";
+        document.getElementById("confirmTitle").textContent = isApprove ? "Confirm approval?" : "Confirm rejection?";
+        document.getElementById("confirmMessage").textContent = isApprove
+            ? `Are you sure you want to approve ${request.id}? The representative will receive a message that this request has been approved.`
+            : `Are you sure you want to reject ${request.id}? The representative will receive a message that this request has been rejected.`;
+        document.getElementById("confirmComment").value = "";
+        const btn = document.getElementById("confirmDecision");
+        btn.textContent = isApprove ? "Yes, approve & notify" : "Yes, reject & notify";
+        btn.className = `rounded-xl px-5 py-2 text-sm font-semibold text-white transition ${isApprove ? "bg-emerald-600 hover:bg-emerald-500" : "bg-red-600 hover:bg-red-500"}`;
+        confirmModal.classList.remove("hidden");
+        confirmModal.classList.add("flex");
+    }
+
+    function closeConfirm() {
+        confirmModal.classList.add("hidden");
+        confirmModal.classList.remove("flex");
+        pendingDecision = null;
+    }
+
+    function showToast(message) {
+        const toast = document.createElement("div");
+        toast.className = "fixed right-4 top-20 z-[70] rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700 shadow dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-300";
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2800);
+    }
+
+    function render() {
+        setActiveButtons(statusFilter);
+        const items = filteredRequests();
+        if (!items.length) {
+            tableWrap.classList.add("hidden");
+            emptyState.classList.remove("hidden");
+            return;
+        }
+        emptyState.classList.add("hidden");
+        tableWrap.classList.remove("hidden");
+
+        requestsBody.innerHTML = items.map((request) => `
+            <tr class="align-top transition hover:bg-slate-50/80 dark:hover:bg-slate-900/40">
+                <td class="px-5 py-4 font-semibold text-slate-900 dark:text-slate-100">${request.id}</td>
+                <td class="px-5 py-4">
+                    <p class="font-medium text-slate-900 dark:text-slate-100">${request.title}</p>
+                    <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">${request.representative} · ${formatDate(request.submittedAt)}</p>
+                </td>
+                <td class="px-5 py-4 text-slate-700 dark:text-slate-300">${request.orgName}</td>
+                <td class="px-5 py-4">${timelineMarkup(request)}</td>
+                <td class="px-5 py-4">${statusBadge(request.directorStatus)}</td>
+                <td class="px-5 py-4">
+                    <div class="flex items-center justify-center gap-2">
+                        <button type="button" class="view-request inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 dark:border-slate-600 dark:text-slate-300 dark:hover:border-blue-700 dark:hover:bg-blue-950/40 dark:hover:text-blue-300"
+                            data-id="${request.id}" title="View request" aria-label="View ${request.id}">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                        </button>
+                        ${request.directorStatus === "pending" ? `
+                            <button type="button" data-decision="approve" data-id="${request.id}" class="decision-trigger inline-flex h-9 w-9 items-center justify-center rounded-lg border border-emerald-200 text-emerald-700 transition hover:bg-emerald-50 dark:border-emerald-800 dark:text-emerald-300 dark:hover:bg-emerald-950/40" title="Approve" aria-label="Approve ${request.id}">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                            </button>
+                            <button type="button" data-decision="reject" data-id="${request.id}" class="decision-trigger inline-flex h-9 w-9 items-center justify-center rounded-lg border border-red-200 text-red-600 transition hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950/40" title="Reject" aria-label="Reject ${request.id}">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
+                        ` : ""}
+                    </div>
+                </td>
+            </tr>
+        `).join("");
+    }
+
+    document.getElementById("statusFilters").addEventListener("click", (event) => {
+        const button = event.target.closest(".status-btn");
+        if (!button) return;
+        statusFilter = button.dataset.status;
+        render();
+    });
+
+    requestSearch.addEventListener("input", () => {
+        searchQuery = requestSearch.value;
+        render();
+    });
+
+    requestsBody.addEventListener("click", (event) => {
+        const viewBtn = event.target.closest(".view-request");
+        if (viewBtn) {
+            openDetail(viewBtn.dataset.id);
+            return;
+        }
+        const decisionBtn = event.target.closest(".decision-trigger");
+        if (decisionBtn) openConfirm(decisionBtn.dataset.id, decisionBtn.dataset.decision);
+    });
+
+    detailActions.addEventListener("click", (event) => {
+        if (event.target.id === "closeDetailFooter") {
+            closeDetail();
+            return;
+        }
+        const decisionBtn = event.target.closest(".decision-trigger");
+        if (decisionBtn) openConfirm(decisionBtn.dataset.id, decisionBtn.dataset.decision);
+    });
+
+    document.getElementById("closeDetailModal").addEventListener("click", closeDetail);
+    document.getElementById("detailBackdrop").addEventListener("click", closeDetail);
+    document.getElementById("cancelConfirm").addEventListener("click", closeConfirm);
+    document.getElementById("confirmBackdrop").addEventListener("click", closeConfirm);
+
+    document.getElementById("confirmDecision").addEventListener("click", () => {
+        if (!pendingDecision) return;
+        const request = findRequest(pendingDecision.id);
+        if (!request) return;
+        request.directorStatus = pendingDecision.action === "approve" ? "approved" : "rejected";
+        request.directorComment = document.getElementById("confirmComment").value.trim() ||
+            (pendingDecision.action === "approve" ? "Final approval granted." : "Final rejection issued.");
+        const label = pendingDecision.action === "approve" ? "approved" : "rejected";
+        closeConfirm();
+        if (activeRequestId === request.id) openDetail(request.id);
+        render();
+        showToast(`${request.id} ${label}. Representative will be notified.`);
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return;
+        if (!confirmModal.classList.contains("hidden")) {
+            closeConfirm();
+            return;
+        }
+        if (!detailModal.classList.contains("hidden")) closeDetail();
+    });
+
+    render();
+});
+</script>
+{% endblock %}

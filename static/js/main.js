@@ -1,3 +1,3 @@
 "use strict";
 
-// Project-wide vanilla JavaScript entry point.
+// Shell UI behavior is initialized inline in templates/base.html.
