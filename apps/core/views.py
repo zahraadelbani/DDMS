@@ -1,49 +1,62 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 
+@login_required
 def submit_request(request):
     return render(request, "representative/submit_request.html")
 
 
+@login_required
 def view_requests(request):
     return render(request, "representative/view_requests.html")
 
 
+@login_required
 def manage_users(request):
     return render(request, "staff/manage_users.html")
 
 
+@login_required
 def staff_view_requests(request):
     return render(request, "staff/view_requests.html")
 
 
+@login_required
 def coordinator_view_requests(request):
     return render(request, "coordinator/view_requests.html")
 
 
+@login_required
 def representative_dashboard(request):
     return render(request, "representative/dashboard.html")
 
 
+@login_required
 def staff_dashboard(request):
     return render(request, "staff/dashboard.html")
 
 
+@login_required
 def coordinator_dashboard(request):
     return render(request, "coordinator/dashboard.html")
 
 
+@login_required
 def coordinator_manage_users(request):
     return render(request, "coordinator/manage_users.html")
 
 
+@login_required
 def director_dashboard(request):
     return render(request, "director/dashboard.html")
 
 
+@login_required
 def director_view_requests(request):
     return render(request, "director/view_requests.html")
 
 
+@login_required
 def profile(request):
     return render(request, "profile.html")

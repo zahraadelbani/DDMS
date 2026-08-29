@@ -134,6 +134,7 @@
 
                 <form class="space-y-6" method="post" action="{% url 'accounts:login' %}">
                     {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ next }}">
                     {% if form.errors %}
                     <div class="rounded-xl bg-red-50 border border-red-200 p-3 text-sm text-red-700">
                         Email or password is not correct.
