@@ -132,7 +132,13 @@
                     <h1 class="text-3xl font-bold text-gray-800 mt-4">Sign In</h1>
                 </div>
 
-                <form class="space-y-6">
+                <form class="space-y-6" method="post" action="{% url 'accounts:login' %}">
+                    {% csrf_token %}
+                    {% if form.errors %}
+                    <div class="rounded-xl bg-red-50 border border-red-200 p-3 text-sm text-red-700">
+                        Email or password is not correct.
+                    </div>
+                    {% endif %}
                     <div>
                         <label for="id_login" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
                         <div class="relative">
@@ -142,7 +148,7 @@
                                     <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
                                 </svg>
                             </div>
-                            <input id="id_login" name="login" type="email" placeholder="you@example.com"
+                            <input id="id_login" name="username" type="email" placeholder="you@example.com"
                                    class="input-field pl-10 w-full px-4 py-3 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100">
                         </div>
                     </div>
@@ -168,7 +174,7 @@
                         <a href="#" class="text-sm text-blue-600 hover:underline">Forgot password?</a>
                     </div>
 
-                    <button type="button" class="signin-btn w-full py-3 px-4 border border-transparent rounded-xl text-sm font-medium text-white transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    <button type="submit" class="signin-btn w-full py-3 px-4 border border-transparent rounded-xl text-sm font-medium text-white transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                         Sign In
                     </button>
 

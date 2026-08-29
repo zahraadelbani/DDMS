@@ -1,5 +1,4 @@
 from django.urls import path
-from django.views.generic import TemplateView
 from .views import (
     submit_request,
     view_requests,
@@ -30,5 +29,4 @@ urlpatterns = [
     path("director/dashboard/", director_dashboard, name="director_dashboard"),
     path("director/view_requests/", director_view_requests, name="director_view_requests"),
     path("profile/", profile, name="profile"),
-    path("", TemplateView.as_view(template_name="accounts/login.html"), name="login"),
 ]
