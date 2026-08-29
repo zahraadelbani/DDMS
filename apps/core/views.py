@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from apps.requests_app.models import ActivityRequest
 
 
 @login_required
@@ -9,7 +10,18 @@ def submit_request(request):
 
 @login_required
 def view_requests(request):
-    return render(request, "representative/view_requests.html")
+    activity_requests = ActivityRequest.objects.filter(created_by=request.user)
+    status = request.GET.get("status")
+    if status:
+        activity_requests = activity_requests.filter(status=status.upper())
+    return render(
+        request,
+        "representative/view_requests.html",
+        {
+            "activity_requests": activity_requests,
+            "active_filter": status or "all",
+        },
+    )
 
 
 @login_required

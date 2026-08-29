@@ -25,343 +25,66 @@
     <div class="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5 dark:border-slate-700 dark:bg-slate-800">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p class="text-sm font-medium text-slate-700 dark:text-slate-300">Filter by status</p>
-            <div id="statusFilters" class="flex flex-wrap gap-2" role="tablist" aria-label="Request status filters">
-                <button type="button" data-filter="all" class="filter-btn rounded-xl border px-4 py-2 text-sm font-medium transition">All</button>
-                <button type="button" data-filter="pending" class="filter-btn rounded-xl border px-4 py-2 text-sm font-medium transition">Pending</button>
-                <button type="button" data-filter="approved" class="filter-btn rounded-xl border px-4 py-2 text-sm font-medium transition">Approved</button>
-                <button type="button" data-filter="rejected" class="filter-btn rounded-xl border px-4 py-2 text-sm font-medium transition">Rejected</button>
+            <div class="flex flex-wrap gap-2">
+                <a href="{% url 'core:representative_view_requests' %}"
+                   class="rounded-xl border px-4 py-2 text-sm font-medium transition {% if active_filter == 'all' %}border-blue-500 bg-blue-50 text-blue-700{% else %}border-slate-200 text-slate-700 hover:bg-slate-50{% endif %}">All</a>
+                <a href="?status=pending"
+                   class="rounded-xl border px-4 py-2 text-sm font-medium transition {% if active_filter == 'pending' %}border-blue-500 bg-blue-50 text-blue-700{% else %}border-slate-200 text-slate-700 hover:bg-slate-50{% endif %}">Pending</a>
+                <a href="?status=approved"
+                   class="rounded-xl border px-4 py-2 text-sm font-medium transition {% if active_filter == 'approved' %}border-blue-500 bg-blue-50 text-blue-700{% else %}border-slate-200 text-slate-700 hover:bg-slate-50{% endif %}">Approved</a>
+                <a href="?status=rejected"
+                   class="rounded-xl border px-4 py-2 text-sm font-medium transition {% if active_filter == 'rejected' %}border-blue-500 bg-blue-50 text-blue-700{% else %}border-slate-200 text-slate-700 hover:bg-slate-50{% endif %}">Rejected</a>
             </div>
         </div>
     </div>
 
-    <div id="requestsPanel" class="rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
-        <div id="tableWrap" class="hidden max-h-[28rem] overflow-auto">
+    <div class="rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        {% if activity_requests %}
+        <div class="max-h-[28rem] overflow-auto">
             <table class="min-w-full border-collapse text-sm">
                 <thead class="sticky top-0 z-10">
                     <tr class="border-b border-slate-200 bg-slate-50 text-left text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
                         <th class="px-5 py-4 font-medium">Request No.</th>
                         <th class="px-5 py-4 font-medium">Activity</th>
+                        <th class="px-5 py-4 font-medium">Start</th>
+                        <th class="px-5 py-4 font-medium">Participants</th>
                         <th class="px-5 py-4 font-medium">Submitted</th>
-                        <th class="px-5 py-4 font-medium">Approval Timeline</th>
                         <th class="px-5 py-4 font-medium">Status</th>
-                        <th class="px-5 py-4 font-medium text-center">Info</th>
                     </tr>
                 </thead>
-                <tbody id="requestsBody" class="divide-y divide-slate-200 dark:divide-slate-700"></tbody>
+                <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
+                    {% for item in activity_requests %}
+                    <tr class="align-top transition hover:bg-slate-50/80 dark:hover:bg-slate-900/40">
+                        <td class="px-5 py-4 font-semibold text-slate-900 dark:text-slate-100">REQ-{{ item.id }}</td>
+                        <td class="px-5 py-4 font-medium text-slate-900 dark:text-slate-100">{{ item.title }}</td>
+                        <td class="px-5 py-4 text-slate-600 dark:text-slate-400">{{ item.start_date|date:"d M Y H:i" }}</td>
+                        <td class="px-5 py-4 text-slate-600 dark:text-slate-400">{{ item.expected_participants }}</td>
+                        <td class="px-5 py-4 text-slate-600 dark:text-slate-400">{{ item.created_at|date:"d M Y" }}</td>
+                        <td class="px-5 py-4">
+                            <span class="inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold
+                                {% if item.status == 'APPROVED' %}border-emerald-200 bg-emerald-50 text-emerald-800
+                                {% elif item.status == 'REJECTED' %}border-red-200 bg-red-50 text-red-800
+                                {% else %}border-amber-200 bg-amber-50 text-amber-800{% endif %}">
+                                {{ item.get_status_display }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
             </table>
         </div>
-
-        <div id="emptyState" class="hidden px-6 py-16 text-center">
-            <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 text-slate-500 dark:bg-slate-900 dark:text-slate-400">
-                <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-            </div>
-            <h3 id="emptyTitle" class="mt-5 text-xl font-semibold text-slate-900 dark:text-slate-100">No requests yet</h3>
-            <p id="emptyMessage" class="mx-auto mt-2 max-w-md text-sm text-slate-600 dark:text-slate-400">
-                You have not submitted any activity requests. Fill in the form and submit to start the approval process.
+        {% else %}
+        <div class="px-6 py-16 text-center">
+            <h3 class="text-xl font-semibold text-slate-900 dark:text-slate-100">No requests yet</h3>
+            <p class="mx-auto mt-2 max-w-md text-sm text-slate-600 dark:text-slate-400">
+                You have not submitted any activity requests.
             </p>
-            <a id="emptyCta" href="{% url 'core:representative_submit_request' %}"
-               class="mt-6 inline-flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white">
+            <a href="{% url 'requests_app:create_request' %}"
+               class="mt-6 inline-flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900">
                 Submit your first request
             </a>
         </div>
+        {% endif %}
     </div>
 </section>
-
-<div id="rejectionModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="rejectionModalTitle">
-    <div id="rejectionBackdrop" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div>
-    <div class="relative w-full max-w-md rounded-3xl border border-slate-200 bg-white p-6 shadow-xl dark:border-slate-700 dark:bg-slate-800">
-        <div class="flex items-start justify-between gap-4">
-            <div>
-                <p class="text-xs font-semibold uppercase tracking-wide text-red-600 dark:text-red-400">Rejection Reason</p>
-                <h3 id="rejectionModalTitle" class="mt-1 text-lg font-semibold text-slate-900 dark:text-slate-100"></h3>
-            </div>
-            <button type="button" id="closeRejectionModal" class="rounded-lg border border-slate-200 p-2 text-slate-500 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-400 dark:hover:bg-slate-700" aria-label="Close">
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-            </button>
-        </div>
-        <p id="rejectionStage" class="mt-4 text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400"></p>
-        <p id="rejectionReason" class="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-300"></p>
-    </div>
-</div>
-{% endblock %}
-
-{% block extra_body %}
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    const stages = ["Directorate Staff", "Unit Coordinator", "Directorate Director"];
-
-    // Demo frontend data only — replace with API/backend later.
-    const requests = [
-        {
-            id: "REQ-2026-014821",
-            title: "Robotics Innovation Workshop",
-            submittedAt: "2026-07-28T10:15:00",
-            stages: [
-                { status: "approved", at: "2026-07-28" },
-                { status: "pending", at: null },
-                { status: "pending", at: null }
-            ],
-            rejectionReason: null,
-            rejectionStage: null
-        },
-        {
-            id: "REQ-2026-013904",
-            title: "Campus Sustainability Panel",
-            submittedAt: "2026-07-12T14:40:00",
-            stages: [
-                { status: "approved", at: "2026-07-13" },
-                { status: "approved", at: "2026-07-15" },
-                { status: "approved", at: "2026-07-18" }
-            ],
-            rejectionReason: null,
-            rejectionStage: null
-        },
-        {
-            id: "REQ-2026-012556",
-            title: "Interfaculty Coding Tournament",
-            submittedAt: "2026-06-30T09:05:00",
-            stages: [
-                { status: "approved", at: "2026-07-01" },
-                { status: "rejected", at: "2026-07-03" },
-                { status: "pending", at: null }
-            ],
-            rejectionReason: "Budget breakdown is incomplete for awards and catering. Please revise the planned costs and resubmit with quotations.",
-            rejectionStage: "Unit Coordinator"
-        },
-        {
-            id: "REQ-2026-011208",
-            title: "Freshers Welcome Social Night",
-            submittedAt: "2026-06-10T16:20:00",
-            stages: [
-                { status: "rejected", at: "2026-06-11" },
-                { status: "pending", at: null },
-                { status: "pending", at: null }
-            ],
-            rejectionReason: "Activity date conflicts with an existing university-wide event. Choose an alternate date before resubmitting.",
-            rejectionStage: "Directorate Staff"
-        },
-        {
-            id: "REQ-2026-010441",
-            title: "Leadership Skills Seminar",
-            submittedAt: "2026-05-22T11:30:00",
-            stages: [
-                { status: "approved", at: "2026-05-23" },
-                { status: "approved", at: "2026-05-26" },
-                { status: "pending", at: null }
-            ],
-            rejectionReason: null,
-            rejectionStage: null
-        }
-    ];
-
-    let activeFilter = "all";
-
-    const requestsBody = document.getElementById("requestsBody");
-    const tableWrap = document.getElementById("tableWrap");
-    const emptyState = document.getElementById("emptyState");
-    const emptyTitle = document.getElementById("emptyTitle");
-    const emptyMessage = document.getElementById("emptyMessage");
-    const emptyCta = document.getElementById("emptyCta");
-    const filterButtons = [...document.querySelectorAll(".filter-btn")];
-    const rejectionModal = document.getElementById("rejectionModal");
-    const rejectionModalTitle = document.getElementById("rejectionModalTitle");
-    const rejectionStage = document.getElementById("rejectionStage");
-    const rejectionReason = document.getElementById("rejectionReason");
-
-    function overallStatus(request) {
-        if (request.stages.some((stage) => stage.status === "rejected")) return "rejected";
-        if (request.stages.every((stage) => stage.status === "approved")) return "approved";
-        return "pending";
-    }
-
-    function formatDate(value) {
-        return new Date(value).toLocaleDateString(undefined, {
-            year: "numeric",
-            month: "short",
-            day: "numeric"
-        });
-    }
-
-    function statusBadge(status) {
-        const styles = {
-            pending: "border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-300",
-            approved: "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300",
-            rejected: "border-red-200 bg-red-50 text-red-800 dark:border-red-800 dark:bg-red-950/40 dark:text-red-300"
-        };
-        const label = status.charAt(0).toUpperCase() + status.slice(1);
-        return `<span class="inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${styles[status]}">${label}</span>`;
-    }
-
-    function stageIcon(status, isCurrent) {
-        if (status === "approved") {
-            return `
-                <span class="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500 text-white shadow-sm">
-                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>
-                </span>`;
-        }
-        if (status === "rejected") {
-            return `
-                <span class="flex h-7 w-7 items-center justify-center rounded-full bg-red-500 text-white shadow-sm">
-                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" /></svg>
-                </span>`;
-        }
-        if (isCurrent) {
-            return `
-                <span class="flex h-7 w-7 items-center justify-center rounded-full border-2 border-blue-500 bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-300">
-                    <span class="h-2 w-2 animate-pulse rounded-full bg-blue-500"></span>
-                </span>`;
-        }
-        return `
-            <span class="flex h-7 w-7 items-center justify-center rounded-full border-2 border-slate-300 bg-white text-slate-400 dark:border-slate-600 dark:bg-slate-800">
-                <span class="h-2 w-2 rounded-full bg-slate-300 dark:bg-slate-600"></span>
-            </span>`;
-    }
-
-    function timelineMarkup(request) {
-        const rejectedIndex = request.stages.findIndex((stage) => stage.status === "rejected");
-        const currentIndex = request.stages.findIndex((stage) => stage.status === "pending");
-
-        return `
-            <div class="min-w-[16rem]">
-                <div class="flex items-center">
-                    ${request.stages.map((stage, idx) => {
-                        const stopped = rejectedIndex !== -1 && idx > rejectedIndex;
-                        const isCurrent = !stopped && idx === currentIndex;
-                        const connectorDone = idx > 0 && request.stages[idx - 1].status === "approved";
-                        return `
-                            <div class="flex items-center ${idx < request.stages.length - 1 ? "flex-1" : ""}">
-                                ${idx > 0 ? `<div class="mx-1 h-0.5 flex-1 ${connectorDone ? "bg-emerald-400" : "bg-slate-200 dark:bg-slate-600"}"></div>` : ""}
-                                <div class="flex flex-col items-center gap-1">
-                                    ${stageIcon(stopped ? "pending" : stage.status, isCurrent)}
-                                </div>
-                            </div>`;
-                    }).join("")}
-                </div>
-                <div class="mt-2 grid grid-cols-3 gap-1 text-center">
-                    ${stages.map((label) => `
-                        <p class="text-[10px] leading-tight text-slate-500 dark:text-slate-400">${label}</p>
-                    `).join("")}
-                </div>
-            </div>`;
-    }
-
-    function filteredRequests() {
-        if (activeFilter === "all") return requests;
-        return requests.filter((request) => overallStatus(request) === activeFilter);
-    }
-
-    function updateFilterButtons() {
-        filterButtons.forEach((button) => {
-            const isActive = button.dataset.filter === activeFilter;
-            button.className = `filter-btn rounded-xl border px-4 py-2 text-sm font-medium transition ${
-                isActive
-                    ? "border-blue-500 bg-blue-50 text-blue-700 dark:border-blue-400 dark:bg-blue-950/50 dark:text-blue-300"
-                    : "border-slate-200 text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/60"
-            }`;
-            button.setAttribute("aria-pressed", String(isActive));
-        });
-    }
-
-    function showEmpty(kind) {
-        tableWrap.classList.add("hidden");
-        emptyState.classList.remove("hidden");
-
-        if (kind === "none") {
-            emptyTitle.textContent = "No requests yet";
-            emptyMessage.textContent = "You have not submitted any activity requests. Fill in the form and submit to start the approval process.";
-            emptyCta.classList.remove("hidden");
-            return;
-        }
-
-        const labels = { pending: "pending", approved: "approved", rejected: "rejected" };
-        emptyTitle.textContent = `No ${labels[activeFilter] || ""} requests`;
-        emptyMessage.textContent = `There are no ${labels[activeFilter] || ""} submissions to show right now. Try another filter or submit a new request.`;
-        emptyCta.classList.toggle("hidden", activeFilter === "approved" || activeFilter === "rejected");
-    }
-
-    function render() {
-        updateFilterButtons();
-        const items = filteredRequests();
-
-        if (!requests.length) {
-            showEmpty("none");
-            return;
-        }
-
-        if (!items.length) {
-            showEmpty("filtered");
-            return;
-        }
-
-        emptyState.classList.add("hidden");
-        tableWrap.classList.remove("hidden");
-
-        requestsBody.innerHTML = items.map((request) => {
-            const status = overallStatus(request);
-            return `
-                <tr class="align-top transition hover:bg-slate-50/80 dark:hover:bg-slate-900/40">
-                    <td class="px-5 py-4">
-                        <p class="font-semibold text-slate-900 dark:text-slate-100">${request.id}</p>
-                    </td>
-                    <td class="px-5 py-4">
-                        <p class="font-medium text-slate-900 dark:text-slate-100">${request.title}</p>
-                    </td>
-                    <td class="px-5 py-4 text-slate-600 dark:text-slate-400">${formatDate(request.submittedAt)}</td>
-                    <td class="px-5 py-4">${timelineMarkup(request)}</td>
-                    <td class="px-5 py-4">${statusBadge(status)}</td>
-                    <td class="px-5 py-4 text-center">
-                        ${status === "rejected" ? `
-                            <button type="button"
-                                class="rejection-info inline-flex h-9 w-9 items-center justify-center rounded-lg border border-red-200 text-red-600 transition hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950/40"
-                                data-id="${request.id}"
-                                title="View rejection reason"
-                                aria-label="View rejection reason for ${request.id}">
-                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
-                                </svg>
-                            </button>
-                        ` : `<span class="text-slate-300 dark:text-slate-600">—</span>`}
-                    </td>
-                </tr>`;
-        }).join("");
-    }
-
-    function openRejectionModal(request) {
-        rejectionModalTitle.textContent = request.id;
-        rejectionStage.textContent = `Rejected at: ${request.rejectionStage || "Unknown stage"}`;
-        rejectionReason.textContent = request.rejectionReason || "No reason provided.";
-        rejectionModal.classList.remove("hidden");
-        rejectionModal.classList.add("flex");
-    }
-
-    function closeRejectionModal() {
-        rejectionModal.classList.add("hidden");
-        rejectionModal.classList.remove("flex");
-    }
-
-    filterButtons.forEach((button) => {
-        button.addEventListener("click", () => {
-            activeFilter = button.dataset.filter;
-            render();
-        });
-    });
-
-    requestsBody.addEventListener("click", (event) => {
-        const trigger = event.target.closest(".rejection-info");
-        if (!trigger) return;
-        const request = requests.find((item) => item.id === trigger.dataset.id);
-        if (request) openRejectionModal(request);
-    });
-
-    document.getElementById("closeRejectionModal").addEventListener("click", closeRejectionModal);
-    document.getElementById("rejectionBackdrop").addEventListener("click", closeRejectionModal);
-    document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") closeRejectionModal();
-    });
-
-    render();
-});
-</script>
 {% endblock %}
