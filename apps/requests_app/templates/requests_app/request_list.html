@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Requests | Digital Directorate Management System{% endblock %}
+{% block page_heading %}Activity Requests{% endblock %}
+
+{% block content %}
+<section class="mx-auto max-w-6xl space-y-6">
+    <div class="flex items-center justify-between">
+        <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">Activity Requests</h2>
+        <a href="{% url 'requests_app:create_request' %}" class="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900">
+            New Request
+        </a>
+    </div>
+
+    <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <table class="min-w-full text-sm">
+            <thead class="bg-slate-50 text-left dark:bg-slate-900">
+                <tr>
+                    <th class="px-4 py-3 font-medium text-slate-700 dark:text-slate-300">Title</th>
+                    <th class="px-4 py-3 font-medium text-slate-700 dark:text-slate-300">Start</th>
+                    <th class="px-4 py-3 font-medium text-slate-700 dark:text-slate-300">End</th>
+                    <th class="px-4 py-3 font-medium text-slate-700 dark:text-slate-300">Participants</th>
+                    <th class="px-4 py-3 font-medium text-slate-700 dark:text-slate-300">Status</th>
+                    <th class="px-4 py-3 font-medium text-slate-700 dark:text-slate-300">Created by</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
+                {% for item in requests %}
+                <tr class="text-slate-800 dark:text-slate-200">
+                    <td class="px-4 py-3">{{ item.title }}</td>
+                    <td class="px-4 py-3">{{ item.start_date }}</td>
+                    <td class="px-4 py-3">{{ item.end_date }}</td>
+                    <td class="px-4 py-3">{{ item.expected_participants }}</td>
+                    <td class="px-4 py-3">{{ item.get_status_display }}</td>
+                    <td class="px-4 py-3">{{ item.created_by.email }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="px-4 py-6 text-center text-slate-500 dark:text-slate-400">
+                        No requests yet.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}
