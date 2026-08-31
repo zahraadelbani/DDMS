@@ -103,6 +103,11 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
+AUTH_USER_MODEL = "accounts.User"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 TAILWIND_APP_NAME = "theme"
+
+LOGIN_URL = "accounts:login"
+LOGIN_REDIRECT_URL = "core:profile"
+LOGOUT_REDIRECT_URL = "accounts:login"
