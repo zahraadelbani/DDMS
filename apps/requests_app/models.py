@@ -24,6 +24,20 @@ class ActivityRequest(models.Model):
         on_delete=models.PROTECT,
         related_name="activity_requests",
     )
+    organization = models.ForeignKey(
+        "core.Organization",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="activity_requests",
+    )
+    unit = models.ForeignKey(
+        "core.Unit",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="activity_requests",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

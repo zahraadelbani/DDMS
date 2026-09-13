@@ -14,6 +14,8 @@ def create_request(request):
         if form.is_valid():
             activity_request = form.save(commit=False)
             activity_request.created_by = request.user
+            activity_request.organization = request.user.organization
+            activity_request.unit = request.user.unit
             activity_request.save()
             return redirect("requests_app:request_list")
     else:
