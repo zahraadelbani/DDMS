@@ -27,7 +27,9 @@
             <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
                 {% for item in requests %}
                 <tr class="text-slate-800 dark:text-slate-200">
-                    <td class="px-4 py-3">{{ item.title }}</td>
+                    <td class="px-4 py-3">
+                        <a href="{% url 'requests_app:request_detail' item.pk %}" class="font-medium text-blue-600 hover:underline">{{ item.title }}</a>
+                    </td>
                     <td class="px-4 py-3">{{ item.start_date }}</td>
                     <td class="px-4 py-3">{{ item.end_date }}</td>
                     <td class="px-4 py-3">{{ item.expected_participants }}</td>

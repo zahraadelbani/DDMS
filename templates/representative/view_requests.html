@@ -56,7 +56,9 @@
                     {% for item in activity_requests %}
                     <tr class="align-top transition hover:bg-slate-50/80 dark:hover:bg-slate-900/40">
                         <td class="px-5 py-4 font-semibold text-slate-900 dark:text-slate-100">REQ-{{ item.id }}</td>
-                        <td class="px-5 py-4 font-medium text-slate-900 dark:text-slate-100">{{ item.title }}</td>
+                        <td class="px-5 py-4">
+                            <a href="{% url 'requests_app:request_detail' item.pk %}" class="font-medium text-blue-600 hover:underline">{{ item.title }}</a>
+                        </td>
                         <td class="px-5 py-4 text-slate-600 dark:text-slate-400">{{ item.start_date|date:"d M Y H:i" }}</td>
                         <td class="px-5 py-4 text-slate-600 dark:text-slate-400">{{ item.expected_participants }}</td>
                         <td class="px-5 py-4 text-slate-600 dark:text-slate-400">{{ item.created_at|date:"d M Y" }}</td>
