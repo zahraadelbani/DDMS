@@ -27,14 +27,30 @@ class UserManager(BaseUserManager):
 
 class User(AbstractUser):
     class Roles(models.TextChoices):
-        REPRESENTATIVE = "REPRESENTATIVE", "Club / Society Representative"
-        COORDINATOR = "COORDINATOR", "Sports Affairs"
-        DIRECTOR = "DIRECTOR", "Activity Directorate"
-        STAFF = "STAFF", "Rectorate / Staff"
+        REPRESENTATIVE = "REPRESENTATIVE", "Representative"
+        DIRECTORATE_STAFF = "DIRECTORATE_STAFF", "Directorate Staff"
+        UNIT_STAFF = "UNIT_STAFF", "Unit Staff"
+        COORDINATOR = "COORDINATOR", "Coordinator"
+        DIRECTOR = "DIRECTOR", "Director"
 
     username = None
     email = models.EmailField("email address", unique=True)
     role = models.CharField(max_length=25, choices=Roles.choices)
+
+    organization = models.ForeignKey(
+        "core.Organization",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="representatives",
+    )
+    unit = models.ForeignKey(
+        "core.Unit",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="staff_members",
+    )
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
