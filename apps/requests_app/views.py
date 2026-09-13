@@ -51,5 +51,27 @@ def request_detail(request, pk):
     return render(
         request,
         "requests_app/request_detail.html",
-        {"activity_request": activity_request},
+        {
+            "activity_request": activity_request,
+            "can_edit": activity_request.can_be_edited_by(request.user),
+        },
+    )
+
+
+@login_required
+def edit_request(request, pk):
+    activity_request = get_object_or_404(ActivityRequest, pk=pk)
+    if not activity_request.can_be_edited_by(request.user):
+        raise PermissionDenied
+    if request.method == "POST":
+        form = ActivityRequestForm(request.POST, instance=activity_request)
+        if form.is_valid():
+            form.save()
+            return redirect("requests_app:request_detail", pk=activity_request.pk)
+    else:
+        form = ActivityRequestForm(instance=activity_request)
+    return render(
+        request,
+        "requests_app/edit_request.html",
+        {"form": form, "activity_request": activity_request},
     )
