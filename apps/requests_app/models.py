@@ -24,8 +24,33 @@ class ActivityRequest(models.Model):
         on_delete=models.PROTECT,
         related_name="activity_requests",
     )
+    organization = models.ForeignKey(
+        "core.Organization",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="activity_requests",
+    )
+    unit = models.ForeignKey(
+        "core.Unit",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="activity_requests",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def can_be_seen_by(self, user):
+        """Representatives only see their own requests. Staff, coordinator
+        and director can see all of them."""
+        if user.role == "REPRESENTATIVE":
+            return self.created_by_id == user.id
+        return True
+
+    def can_be_edited_by(self, user):
+        """Only the creator can edit and only while it is still a draft."""
+        return self.created_by_id == user.id and self.status == self.Status.DRAFT
 
     class Meta:
         ordering = ["-created_at"]
