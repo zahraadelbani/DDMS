@@ -1,6 +1,7 @@
 """User model for DDMS."""
 
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.core.exceptions import ValidationError
 from django.db import models
 
 
@@ -22,7 +23,6 @@ class UserManager(BaseUserManager):
     def create_superuser(self, email, password=None, **extra_fields):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
-        extra_fields.setdefault("role", User.Roles.DIRECTOR)
 
         if extra_fields.get("is_staff") is not True:
             raise ValueError("Superuser must have is_staff=True.")
@@ -42,7 +42,9 @@ class User(AbstractUser):
 
     username = None
     email = models.EmailField("email address", unique=True)
-    role = models.CharField(max_length=25, choices=Roles.choices)
+    role = models.CharField(
+        max_length=25, choices=Roles.choices, blank=True
+    )
 
     organization = models.ForeignKey(
         "core.Organization",
@@ -63,6 +65,40 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
 
     objects = UserManager()
+
+    def clean(self):
+        """A representative needs an organization and no unit, a unit staff
+        needs a unit and no organization, the other roles need neither."""
+        super().clean()
+        errors = {}
+
+        if self.role == self.Roles.REPRESENTATIVE:
+            if self.organization is None:
+                errors["organization"] = "A representative needs an organization."
+            if self.unit is not None:
+                errors["unit"] = "A representative cannot have a unit."
+
+        elif self.role == self.Roles.UNIT_STAFF:
+            if self.unit is None:
+                errors["unit"] = "A unit staff needs a unit."
+            if self.organization is not None:
+                errors["organization"] = "A unit staff cannot have an organization."
+
+        elif self.role in (
+            self.Roles.DIRECTORATE_STAFF,
+            self.Roles.COORDINATOR,
+            self.Roles.DIRECTOR,
+        ):
+            if self.organization is not None:
+                errors["organization"] = "This role cannot have an organization."
+            if self.unit is not None:
+                errors["unit"] = "This role cannot have a unit."
+
+        elif self.role == "" and not self.is_superuser:
+            errors["role"] = "Please choose a role."
+
+        if errors:
+            raise ValidationError(errors)
 
     def __str__(self):
         return self.email

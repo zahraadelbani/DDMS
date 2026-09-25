@@ -5,12 +5,14 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, redirect, render
 
 from apps.accounts.models import User
+from apps.core.decorators import role_required
 
 from .forms import ActivityRequestForm
 from .models import ActivityRequest
 
 
 @login_required
+@role_required(User.Roles.REPRESENTATIVE, User.Roles.UNIT_STAFF)
 def create_request(request):
     if request.method == "POST":
         form = ActivityRequestForm(request.POST)
@@ -33,6 +35,14 @@ def request_list(request):
     )
     if request.user.role == User.Roles.REPRESENTATIVE:
         requests = requests.filter(created_by=request.user)
+    elif request.user.role == User.Roles.UNIT_STAFF:
+        requests = requests.filter(unit=request.user.unit)
+    elif request.user.role not in (
+        User.Roles.DIRECTORATE_STAFF,
+        User.Roles.COORDINATOR,
+        User.Roles.DIRECTOR,
+    ):
+        requests = requests.none()
     return render(
         request, "requests_app/request_list.html", {"requests": requests}
     )
@@ -59,6 +69,7 @@ def request_detail(request, pk):
 
 
 @login_required
+@role_required(User.Roles.REPRESENTATIVE, User.Roles.UNIT_STAFF)
 def edit_request(request, pk):
     activity_request = get_object_or_404(ActivityRequest, pk=pk)
     if not activity_request.can_be_edited_by(request.user):
