@@ -42,11 +42,21 @@ class ActivityRequest(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def can_be_seen_by(self, user):
-        """Representatives only see their own requests. Staff, coordinator
-        and director can see all of them."""
-        if user.role == "REPRESENTATIVE":
+        """Every role is written here on purpose, so a new role does not
+        get access by accident."""
+        from apps.accounts.models import User
+
+        if user.role == User.Roles.REPRESENTATIVE:
             return self.created_by_id == user.id
-        return True
+        if user.role == User.Roles.UNIT_STAFF:
+            return self.unit_id is not None and self.unit_id == user.unit_id
+        if user.role in (
+            User.Roles.DIRECTORATE_STAFF,
+            User.Roles.COORDINATOR,
+            User.Roles.DIRECTOR,
+        ):
+            return True
+        return False
 
     def can_be_edited_by(self, user):
         """Only the creator can edit and only while it is still a draft."""

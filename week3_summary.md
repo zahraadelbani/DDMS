@@ -179,3 +179,14 @@ These are the three things i had to decide by myself. Please tell me if any of t
 
 1. Is the Unit Staff assumption ok, or will there be seperate pages for it later?
 2. Can one organization have more than one representative account? That changes what a representative should see in the list.
+
+
+## Corrections after review
+These are the changes i made after your feedback on this PR.
+
+- **Request views are explicit by role now.** `create_request` and `edit_request` only let Representative and Unit Staff in. The list and the detail page still let every role in, but what you see is decided per role.
+- **`can_be_seen_by` lists every role one by one.** Representative sees its own requests, Unit Staff sees only the requests of its own unit, Directorate Staff, Coordinator and Director see all of them. Any role that is not in the list gets `False`, so a new role doesnt get access by accident. The list page uses the same rules.
+- **Unit Staff is scoped to its own unit.** It can still open the shared staff dashboard and request pages, but it cant open `manage_users` anymore, only Directorate Staff can. I thought managing all users doesnt fit a unit scoped role, please tell me if thats wrong.
+- **Superusers dont get the Director role anymore.** The `role` field can be empty now and the superuser keeps it empty, admin access comes only from `is_superuser` and `is_staff`.
+- **Invalid user assignments are blocked** in `User.clean()`. A Representative needs an organization and no unit, a Unit Staff needs a unit and no organization, and the other roles cant have either one. A normal user without a role is also blocked, only a superuser can have an empty role.
+- **Tests.** 42 tests now, all passing. I added tests for the create and edit pages per role, unit scoping, the user validation and the superuser role. For the validation tests i check which field the error is on, because at first they were passing only because the test users had no password, not because of my rule.

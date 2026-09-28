@@ -33,7 +33,7 @@ def view_requests(request):
 
 
 @login_required
-@role_required(*STAFF_ROLES)
+@role_required(User.Roles.DIRECTORATE_STAFF)
 def manage_users(request):
     return render(request, "staff/manage_users.html")
 
